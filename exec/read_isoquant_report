@@ -1,0 +1,35 @@
+#!/usr/bin/env Rscript
+# library(readxl) # read in excel sheets
+# library(stringr) # operations on strings
+# suppressPackageStartupMessages(library("optparse")) # parsing args: argparse would need python... lazy bastards...
+
+make_option = optparse::make_option
+
+option_list <- list(
+  make_option(c("-v", "--verbose"),
+              action="store_true",
+              default=FALSE,
+              help="Print extra output [default]"),
+  make_option(c("-p", "--pattern"),
+              help="The pattern that can select columns with intensities"),
+  make_option(c("-t", "--target"),
+              default="isoquant.Rd",
+              help="Path to the file outcome [defaut %default]"),
+  make_option(c("-s", "--sheet"),
+              default='TOP3 quantification',
+              help="Which excel sheet of the report should be analysed? [default \'%default\']")
+)
+op = optparse::OptionParser(
+  option_list=option_list,
+  usage="%prog [options] isoquantr excel protein reports' paths") # this line is shown on top of the help manual
+opt = optparse::parse_args(op, positional_arguments = T)
+if(opt$options$verbose){print(opt)}
+if(opt$options$verbose){print("Reading ISOQuant Reports.")}
+DLs = lapply(opt$args,
+             LFQBench2::isoquant_report,
+             col_pattern = opt$options$pattern,
+             sheet = opt$options$sheet)
+if(opt$options$verbose){print("Merging ISOQuant Reports.")}
+
+DL = dplyr::bind_rows(DLs)
+save(DL, file=opt$options$target)

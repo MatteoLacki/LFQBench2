@@ -1,0 +1,23 @@
+Package: LFQBench2
+Type: Package
+Title: Compare results of protein and peptide searches
+Version: 0.1.0
+Author: Matteo Lacki, Ute Diestler, Stefan Tenzer
+Maintainer: MatteoLacki <matteo.lacki@gmail.com>
+Description: This package aims at assuring comparability between 
+    the outcomes of different pieces of software that aim to find peptides and proteins.
+    One of the possibilities here is to compare the reproducibility of experimentally
+    injected mixtures of proteomes under different ratios.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends: R(>= 3.4.4)
+Imports:
+   dplyr,
+   readxl,
+   tidyr,
+   assertthat,
+   stringr,
+   readr,
+   optparse
+RoxygenNote: 6.1.1
