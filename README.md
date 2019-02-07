@@ -4,6 +4,14 @@
 ```{r}
 install.packages("LFQBench2")
 ```
+does not yet work!
+Install `devtools` and install the software directly from github:
+```{r}
+install.packages("devtools")
+library(devtools)
+install_github("MatteoLacki/LFQBench2")
+```
+
 
 ## Usage:
 The package can be used in R scripts:
