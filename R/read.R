@@ -21,7 +21,9 @@ isoquant_report = function(path,
   DW$file = path
   DW = dplyr::select(DW, -contains('AVERAGE'))
   # averages are not interesting for the analysis and we can easily get them later on.
-  DL = tidyr::gather(DW, "condition", "intensity", contains(col_pattern))
+  DL = tidyr::gather(DW, "condition", "intensity",
+                     contains(col_pattern), na.rm = T)
+  # na.rm makes the long format meaningfully smaller.
   colnames(DL) = make.names(colnames(DL))
   DL = tidyr::separate(DL, condition, c('project', 'partner', 'run'), sep=" ")
   get_k_part = function(strings, k) sapply(strsplit(strings, '-'), '[[', k)
