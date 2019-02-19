@@ -1,1 +1,9 @@
 exportPattern("^[[:alpha:]]+")
+
+importFrom(ggplot2, ggplot, aes, geom_hline, geom_density, geom_density_2d, scale_x_continuous, scale_y_continuous, ylab, xlab, theme, geom_smooth)
+importFrom(stringr, str_replace, str_split_fixed)
+importFrom(dplyr, mutate, select, rename, filter, ungroup, summarize, group_by)
+importFrom(tidyr, spread, separate)
+importFrom(magrittr,"%>%")
+importFrom(ggthemes, theme_tufte)
+importFrom(stats, median, na.omit)

@@ -1,17 +1,17 @@
 require(dplyr)
 require(tidyr)
 
-#' Parse an excel ISOQuant protein report.
+#' Parse a full excel ISOQuant protein report.
 #'
 #' Prepare the data in the long format, so that it is easier to combine it.
 #'
-#' @param path Path
+#' @param path Path to the protein report.
 #' @param col_pattern A pattern that will select columns with intensities.
 #' @param sheet Which excell sheet should be imported?
 #' @param sample_no2bio_rep An additional data.frame mapping sample numbers to biological replicates.
 #' @return Standard long format data frame object.
 #' @export
-isoquant_report = function(path,
+protein_report = function(path,
                            col_pattern,
                            sheet="TOP3 quantification",
                            sample_no2bio_rep=NA)
@@ -25,6 +25,8 @@ isoquant_report = function(path,
                      contains(col_pattern), na.rm = T)
   # na.rm makes the long format meaningfully smaller.
   colnames(DL) = make.names(colnames(DL))
+
+  # THIS MIGHT BE TOO SPECIFIC....
   DL = tidyr::separate(DL, condition, c('project', 'partner', 'run'), sep=" ")
   get_k_part = function(strings, k) sapply(strsplit(strings, '-'), '[[', k)
   DL = dplyr::mutate(DL, run = as.integer(run),
@@ -35,4 +37,38 @@ isoquant_report = function(path,
   DL
 }
 
+
+
+#' Parse a ISOQuant csv peptide quantification report.
+#'
+#' Prepare the data in the long format, so that it is easier to combine it.
+#'
+#' @param path Path to the report.
+#' @param col_pattern A pattern that will select columns with intensities.
+#' @return Standard long format data frame object.
+#' @export
+peptide_quantification_report = function(path,
+                                         col_pattern)
+{
+  DW = readr::read_csv(path)
+  DW$file = path
+  DL = tidyr::gather(DW, "condition", "intensity",
+                     dplyr::contains(col_pattern), na.rm = T)
+  DL
+}
+
+#' Parse a simple ISOQuant csv protein quantification report.
+#'
+#' Prepare the data in the long format, so that it is easier to combine it.
+#'
+#' @param path Path to the report.
+#' @return Standard long format data frame object.
+#' @export
+simple_protein_report = function(path)
+{
+  DW = readr::read_csv(path)
+  DL = tidyr::gather(DW, "condition", "intensity", -entry, na.rm = T)
+  DL$file = path
+  DL
+}
 

@@ -19,5 +19,8 @@ Imports:
    assertthat,
    stringr,
    readr,
-   optparse
+   optparse,
+   magrittr,
+   ggthemes,
+   ggplot2
 RoxygenNote: 6.1.1
