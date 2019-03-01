@@ -12,9 +12,9 @@ require(tidyr)
 #' @return Standard long format data frame object.
 #' @export
 protein_report = function(path,
-                           col_pattern,
-                           sheet="TOP3 quantification",
-                           sample_no2bio_rep=NA)
+                          col_pattern,
+                          sheet="TOP3 quantification",
+                          sample_no2bio_rep=NA)
 {
   contains = dplyr::contains
   DW = readxl::read_excel(path, sheet=sheet, skip=1)
