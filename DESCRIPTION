@@ -22,5 +22,8 @@ Imports:
    optparse,
    magrittr,
    ggthemes,
-   ggplot2
+   ggplot2,
+   cowplot,
+   data.table,
+   matrixStats
 RoxygenNote: 6.1.1
