@@ -41,6 +41,10 @@ d2medians[,lapply(probs, function(prob) quantile(rt, prob)),
 DT = d2medians[, .(med_rt=median(rt), mad_rt=mad(rt)),
                  .(run, med_rd=round(med, 0))]
 
+# seems that NA's are slowing things down
+rowQuantiles(matrix(rnorm(10000*100), 10000, 100))
+
+
 library(ggplot2)
 library(ggthemes)
 
