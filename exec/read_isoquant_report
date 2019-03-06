@@ -3,30 +3,47 @@ suppressPackageStartupMessages(library("optparse")) # parsing args: argparse nee
 make_option = optparse::make_option
 
 option_list <- list(
+  make_option(c("-t", "--target"),
+              default="isoquant.csv",
+              help="Path to the file outcome [defaut %default]"),
+  make_option(c("-r", "--report"),
+              default='protein',
+              help="Which type of reports to parse? ['protein' , 'peptide', 'short_protein']"),
+  make_option(c("-p", "--intensity_pattern"),
+              help="The pattern that select columns with intensities. Consult the 'stringr' cheetsheet for details."),
+  make_option(c("-s", "--sheet"),
+              default='TOP3 quantification',
+              help="In case of protein report, which excel to parse? Otherwise, skip it. [default \'%default\']"),
   make_option(c("-v", "--verbose"),
               action="store_true",
               default=FALSE,
-              help="Print extra output [default]"),
-  make_option(c("-p", "--pattern"),
-              help="The pattern that can select columns with intensities"),
-  make_option(c("-t", "--target"),
-              default="isoquant.Rd",
-              help="Path to the file outcome [defaut %default]"),
-  make_option(c("-s", "--sheet"),
-              default='TOP3 quantification',
-              help="Which excel sheet of the report should be analysed? [default \'%default\']")
+              help="Print extra output [default]")
 )
-op = optparse::OptionParser(
-  option_list=option_list,
-  usage="%prog [options] isoquantr excel protein reports' paths") # this line is shown on top of the help manual
+op = optparse::OptionParser(option_list=option_list,
+  usage="%prog [options] IsoQuant report paths") # this line is shown on top of the help manual
 opt = optparse::parse_args(op, positional_arguments = T)
-if(opt$options$verbose){print(opt)}
-if(opt$options$verbose){print("Reading ISOQuant Reports.")}
-DLs = lapply(opt$args,
-             LFQBench2::isoquant_report,
-             col_pattern = opt$options$pattern,
-             sheet = opt$options$sheet)
-if(opt$options$verbose){print("Merging ISOQuant Reports.")}
+verbose = opt$options$verbose
+if(verbose) print(opt)
 
-DL = dplyr::bind_rows(DLs)
-save(DL, file=opt$options$target)
+if(verbose) print("Reading ISOQuant Reports.")
+DLs = lapply(opt$args,
+             LFQBench2::read_isoquant,
+             report=opt$options$report,
+             long_df=T,
+             intensity_pattern=opt$options$intensity_pattern,
+             sheet=opt$options$sheet)
+
+if(verbose) print("Merging ISOQuant Reports.")
+DL = data.table::rbindlist(DLs, use.names=T, fill=T)
+target = opt$options$target
+ext = tools::file_ext(target)
+
+if(verbose) print("Saving.")
+if(ext == 'csv'){
+  data.table::fwrite(DL, file=target)
+} else{
+  if(ext %in% c('Rd', 'rd')){
+    save(DL, file=target)
+  } else stop("Wrong extension.")
+}
+if(verbose) print("Done. Have a nice day.")

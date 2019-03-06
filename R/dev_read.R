@@ -4,16 +4,20 @@
 #
 # ## Peptides
 # # path = '~/Projects/LFQBench2/data/peptides.csv'
-# # path = '~/Projects/LFQBench2/data/simple_proteins.csv'
+# path = '~/Projects/LFQBench2/data/simple_proteins.csv'
 # # path = '/home/matteo/Projects/LFQBench2/HYE/proteins.xlsx'
 # # path = '~/Projects/LFQBench2/data/peptides.csv'
 #
 #
-# path = '~/Projects/LFQBench2/data/proteins.xlsx'
+# # path = '~/Projects/LFQBench2/data/proteins.xlsx'
 # path = path.expand(path)
 # sheet="TOP3 quantification"
 # intensity_pattern="[A|B][:space:][:digit:]"
 # long_df=FALSE
+#
+# read_isoquant_simple_protein_report(path, T)
+# fread(path)
+#
 #
 #
 #
@@ -34,6 +38,7 @@
 #
 # prot_spec = str_split(DW[,entry], prot_spec_sep, simplify = T)[,1:2]
 # DL$prot = prot_spec[,1]
+#
 # DL$specie = prot_spec[,2]
 #
 # DLL = melt(DL,

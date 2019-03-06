@@ -25,7 +25,7 @@ get_smoothed_data = function(x, runs, ids,
   D = D[, run_cnt:=length(rt), by=id][run_cnt>=min_observed_cnt]
   D = unique( D, by=c('id','run') )
   D[, run := paste0("run_", run) ]
-  DW = dcast(D, id + run_cnt ~run, value.var = 'rt')
+  DW = dcast(D, id + run_cnt ~ run, value.var = 'rt')
   DW_m = as.matrix(DW[,!1:2])
   # the reference run (to be plotted on the x axis)
   pep_medians = rowMedians(DW_m, na.rm=T)

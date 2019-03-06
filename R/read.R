@@ -6,7 +6,7 @@
 #' @param sheet Which excell sheet should be imported [default="TOP3 quantification"]
 #' @return Wide or long data.table
 #' @export
-read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]", sheet="TOP3 quantification")
+read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]", sheet="TOP3 quantification", ...)
 {
   o = as.data.table(read_excel(path, sheet=sheet, skip=1))
   o[o == ""] = NA
@@ -20,7 +20,6 @@ read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="
   return(o)
 }
 
-
 #' Read an ISOQuant csv peptide report.
 #'
 #' @param path Path to the report.
@@ -28,7 +27,7 @@ read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="
 #' @param intensity_pattern A pattern that will select columns with intensities [default = "intensity in"]
 #' @return Wide or long data.table
 #' @export
-read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern = "intensity in")
+read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern = "intensity in", ...)
 {
   o = fread(path)
   o[o == ""] = NA
@@ -42,7 +41,6 @@ read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern
   return(o)
 }
 
-
 #' Read a simple protein ISOQuant report.
 #'
 #' @param path Path to the report.
@@ -50,7 +48,8 @@ read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern
 #' @param intensity_pattern A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']
 #' @return Wide or long data.table
 #' @export
-read_isoquant_simple_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]"){
+read_isoquant_simple_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]", ...)
+{
   o = fread(path)
   o[o == ""] = NA
   o$path = path
@@ -62,3 +61,17 @@ read_isoquant_simple_protein_report = function(path, long_df=FALSE, intensity_pa
   return(o)
 }
 
+#' Read an IsoQuant report.
+#'
+#' @param report Which report is being read? ["protein", "peptide", "simple_protein"]
+#' @param ... Parameters to the called function.
+#' @return Wide or long data.table
+#' @export
+read_isoquant = function(report="protein", ...)
+{
+  parse=function(...) stop('Report type can be either "protein", "peptide", or "simple_protein".') # guardian
+  if(report == "protein") parse=read_isoquant_protein_report
+  if(report == "peptide") parse=read_isoquant_peptide_report
+  if(report == "simple_protein") parse=read_isoquant_simple_protein_report
+  return(parse(...))
+}

@@ -1,7 +1,8 @@
 exportPattern("^[[:alpha:]]+")
 
-importFrom(stringr, str_replace, str_split_fixed, str_detect)
+importFrom(stringr, str_replace, str_split_fixed, str_which)
 importFrom(stats, median, runmed, na.omit, smooth.spline)
 importFrom(matrixStats, rowMedians)
 importFrom(data.table, as.data.table, data.table, dcast, melt, fread)
 importFrom(readxl, read_excel)
+importFrom(tools, file_ext)

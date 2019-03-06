@@ -3,7 +3,7 @@ Type: Package
 Title: Compare results of protein and peptide searches
 Version: 0.1.0
 Author: Matteo Lacki, Ute Diestler, Stefan Tenzer
-Maintainer: MatteoLacki <matteo.lacki@gmail.com>
+Maintainer: Matteo Lacki <matteo.lacki@gmail.com>
 Description: This package aims at assuring comparability between 
     the outcomes of different pieces of software that quantify peptides and proteins in LC-MS, LC-IM-MS.
     One of the possibilities here is to compare the reproducibility of experimentally
@@ -17,5 +17,7 @@ Imports:
    matrixStats,
    readxl,
    stringr,
-   optparse
+   optparse,
+   tools,
+   utils
 RoxygenNote: 6.1.1
