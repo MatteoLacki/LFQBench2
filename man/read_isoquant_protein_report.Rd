@@ -5,17 +5,17 @@
 \title{Read an ISOQuant protein report.}
 \usage{
 read_isoquant_protein_report(path, long_df = FALSE,
-  sheet = "TOP3 quantification",
-  intensity_pattern = "[A|B][:space:][:digit:]")
+  intensity_pattern = "[A|B][:space:][:digit:]",
+  sheet = "TOP3 quantification", ...)
 }
 \arguments{
 \item{path}{Path to the protein report.}
 
 \item{long_df}{Should the output be in the long format? [default = FALSE]}
 
-\item{sheet}{Which excell sheet should be imported [default="TOP3 quantification"]}
+\item{intensity_pattern}{A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']}
 
-\item{intensity_pattern}{A pattern that will select columns with intensities [default="intensity in"]}
+\item{sheet}{Which excell sheet should be imported [default="TOP3 quantification"]}
 }
 \value{
 Wide or long data.table
