@@ -1,8 +1,5 @@
 #!/usr/bin/env Rscript
-# library(readxl) # read in excel sheets
-# library(stringr) # operations on strings
-# suppressPackageStartupMessages(library("optparse")) # parsing args: argparse would need python... lazy bastards...
-
+suppressPackageStartupMessages(library("optparse")) # parsing args: argparse needs python
 make_option = optparse::make_option
 
 option_list <- list(
