@@ -3,11 +3,17 @@ library(matrixStats)
 library(stringr)
 
 ## Peptides
-
-path = '/home/matteo/Projects/LFQBench2/HYE/peptides.csv'
+path = '~/Projects/LFQBench2/data/peptides.csv'
+path = path.expand(path)
 # path = '/home/matteo/Projects/LFQBench2/HYE/proteins.xlsx'
+TIB = peptide_quantification_report(path, "intensity in")
+head(as.data.table(TIB))
+
+
+
 DW = fread(path)
 DW[DW == ""] = NA
+# rbind(DW,DW)
 
 intensity_pattern = "intensity in"
 cond_rep_sep = " "
@@ -30,22 +36,24 @@ DLL = melt(DL,
            na.rm=T)
 
 DLL[, cond := str_replace(cond, intensity_pattern,"")]
-conds = str_split(DLL$cond, cond_rep_separator, simplify=T)[,2:3]
+conds = str_split(DLL$cond, cond_rep_sep, simplify=T)[,2:3]
 DLL$cond = conds[,1]
 DLL$run = as.integer(conds[,2])
+
+
+
 medians = DLL[, .(int_med=median(intensity), run_cnt=.N), .(cond, id, prot, specie)]
 medians = dcast(medians, id+prot+specie~cond,value.var = 'int_med')
-medians_good = medians[complete.cases(medians)]
+medians_good = medians[complete.cases(medians)][specie %in% c("HUMAN", "YEAS8", "ECOLI")]
 
-ggplot(medians_good, aes(x=A, y=B/A))+
+ggplot(medians_good, aes(x=HYE110_A, y=HYE110_B/HYE110_A))+
   geom_hline(yintercept = 1, color='orange')+
   geom_point(size=.1)+
   scale_x_log10()+
   scale_y_log10()+
   cowplot::theme_cowplot()
 
-
-ggplot(medians_good, aes(x=A, y=B/A))+
+ggplot(medians_good, aes(x=HYE110_A, y=HYE110_B/HYE110_A)) +
   geom_hline(yintercept = 1, color='orange')+
   geom_density_2d(aes(color=specie))+
   scale_x_log10()+
