@@ -19,5 +19,7 @@ Imports:
    stringr,
    optparse,
    tools,
-   utils
+   utils,
+   ggplot2,
+   scales
 RoxygenNote: 6.1.1
