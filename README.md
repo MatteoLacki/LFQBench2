@@ -31,7 +31,7 @@ Check out `?read_isoquant`, `?read_isoquant_protein_report`, `?read_isoquant_pep
 
 ### Comparing intensities of protein mixtures
 
-With our package, you can produce plots like this !(https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye.jpg "Comparing Human-Yeast-Ecoli Proteomes")
+With our package, you can produce plots like this ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye.jpg "Comparing Human-Yeast-Ecoli Proteomes")
 with as little as this code:
 ```{R}
 # I assume you opened the protein data and stored it under D
