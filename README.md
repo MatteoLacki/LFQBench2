@@ -64,12 +64,17 @@ ids = D$id # which peptide was measured
 S = get_smoothed_data(rt, runs, ids) # get the data for plotting
 S[,run:=ordered(run)] # change run to ordered factor, for ggplot to be happy
 plot_dist_to_reference(S)
-
 ```
 
 which will result in
 ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds.jpg "Distances to Median Retention Times")
 
+Note, that if you eliminate columns `bot` or `top` from `S`, the ribbons will not be plotted,
+```{R}
+S[, `:=`(top=NULL, bot=NULL)]
+plot_dist_to_reference(Z)
+```
+resulting in
 
 ### Command line usage:
 * Find out where your package was installed with `find.package('LFQBench2')` in your R console
