@@ -75,6 +75,7 @@ S[, `:=`(top=NULL, bot=NULL)]
 plot_dist_to_reference(Z)
 ```
 resulting in
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2.jpg "Distances to Median Retention Times")
 
 ### Command line usage:
 * Find out where your package was installed with `find.package('LFQBench2')` in your R console
