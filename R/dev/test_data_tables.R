@@ -28,10 +28,6 @@
 # prw_m = as.matrix(prw[,2:11])
 # meds = rowMedians(prw_m, na.rm=T)
 #
-#
-#
-#
-#
 # pr[,list(run, rt)]
 # pr[,.(run, rt)]
 # pr[,.(dupa = run, chuj = rt)]
@@ -53,7 +49,3 @@
 #
 # pr[,rt:=NULL]
 # pr$dupa = 1
-#
-#
-#
-#
