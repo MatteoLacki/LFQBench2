@@ -1,4 +1,4 @@
-# Welcome to LFQBench2: an R package that can be used to compare the outcomes of protein/peptide searches
+# Welcome to LFQBench2: an R package that can be used to compare protein/peptide quantification results
 
 ### Installation
 Install `devtools` with
