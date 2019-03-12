@@ -28,7 +28,7 @@ Check out `?read_isoquant`, `?read_isoquant_protein_report`, `?read_isoquant_pep
 
 ### Comparing intensities of protein mixtures
 
-With our package, you can produce plots like this ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye.jpg "Comparing Human-Yeast-Ecoli Proteomes")
+With our package, you can produce plots like this ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye_2.jpg "Comparing Human-Yeast-Ecoli Proteomes")
 with as little as this code:
 ```{R}
 library(LFQBench2)
@@ -67,7 +67,7 @@ plot_dist_to_reference(S)
 ```
 
 which will result in
-![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds.jpg "Distances to Median Retention Times")
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds_2.jpg "Distances to Median Retention Times")
 
 Note, that if you eliminate columns `bot` or `top` from `S`, the ribbons will not be plotted,
 ```{R}
@@ -75,7 +75,7 @@ S[, `:=`(top=NULL, bot=NULL)]
 plot_dist_to_reference(Z)
 ```
 resulting in
-![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2.jpg "Distances to Median Retention Times")
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2_2.jpg "Distances to Median Retention Times")
 
 ### Command line usage:
 * Find out where your package was installed with `find.package('LFQBench2')` in your R console
