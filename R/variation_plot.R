@@ -1,8 +1,3 @@
-# D = fread("~/Projects/retentiontimealignment/Data/annotated_data.csv")
-# ids = D$id
-# runs = D$run
-# x = D$rt
-
 #' Get smoothed distances to reference and estimates of standard deviation.
 #'
 #' @param x Array of values to smooth.
@@ -61,4 +56,22 @@ get_smoothed_data = function(x, runs, ids,
   }
   SD[,run:=as.integer(gsub("run_", "", SD$run))]
   return(SD)
+}
+
+
+#' Plot distances to the reference run.
+#'
+#' @param S A data.table (or data.frame) with columns 'run', 'x' (the reference), and 'mid'. Additionally, can contain columns 'top' and 'bot' for ribbons. As produced by the 'get_smoothed_data' function.
+#' @return A ggplot object.
+#' @export
+plot_dist_to_reference = function(S)
+{
+  o = ggplot(S, aes(x=x, group=run))
+  if("top" %in% colnames(S) & "bot" %in% colnames(S)) o = o + geom_ribbon(aes(ymin=bot, ymax=top), alpha=.2)
+  o = o +
+    geom_line(aes(y=mid, color=run)) +
+    theme_classic() +
+    xlab('Reference Retention Time') +
+    ylab('Distance to Reference')
+  return(o)
 }
