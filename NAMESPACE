@@ -6,6 +6,6 @@ importFrom(matrixStats, rowMedians)
 importFrom(data.table, as.data.table, data.table, dcast, melt, fread, tstrsplit)
 importFrom(readxl, read_excel)
 importFrom(tools, file_ext)
-importFrom(ggplot2, ggplot, aes, geom_point, geom_hline, geom_density_2d, geom_hex, geom_label, scale_x_log10, scale_y_log10, theme_classic)
+importFrom(ggplot2, ggplot, aes, geom_point, geom_hline, geom_density_2d, geom_hex, geom_label, geom_line, geom_ribbon, scale_x_log10, scale_y_log10, theme_classic, xlab, ylab)
 importFrom(scales, comma)
 

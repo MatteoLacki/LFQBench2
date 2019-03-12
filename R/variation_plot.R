@@ -25,7 +25,7 @@ get_smoothed_data = function(x, runs, ids,
   # the reference run (to be plotted on the x axis)
   pep_medians = rowMedians(DW_m, na.rm=T)
   # distances to the reference run
-  # Ref_d = -sweep(DW_m, 1, pep_medians)
+  Ref_d = -sweep(DW_m, 1, pep_medians)
   Ref_d = as.data.table(Ref_d)
   Ref_d$med = pep_medians
   Ref_d$peptide = DW$id
