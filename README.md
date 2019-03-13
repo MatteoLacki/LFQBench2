@@ -69,14 +69,6 @@ plot_dist_to_reference(S)
 which will result in
 ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds_2.jpg "Distances to Median Retention Times")
 
-Note, that if you eliminate columns `bot` or `top` from `S`, the ribbons will not be plotted,
-```{R}
-S[, `:=`(top=NULL, bot=NULL)]
-plot_dist_to_reference(Z)
-```
-resulting in
-![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2_2.jpg "Distances to Median Retention Times")
-
 Admittedly, with 10 runs together we experience some overplotting.
 This is easy to cope with, since the output of the `plot_dist_to_reference` function
 returns a `ggplot` object,
@@ -84,6 +76,14 @@ returns a `ggplot` object,
 o + facet_wrap(~run) + geom_hline(yintercept=0, linetype='dotted')
 ```
 ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds3_2.jpg "Distances to Median Retention Times")
+
+Note, that if you eliminate columns `bot` or `top` from `S`, the ribbons will not be plotted,
+```{R}
+S[, `:=`(top=NULL, bot=NULL)]
+plot_dist_to_reference(Z)
+```
+resulting in
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2_2.jpg "Distances to Median Retention Times")
 
 
 ### Command line usage:
