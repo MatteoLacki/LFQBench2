@@ -77,6 +77,15 @@ plot_dist_to_reference(Z)
 resulting in
 ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds2_2.jpg "Distances to Median Retention Times")
 
+Admittedly, with 10 runs together we experience some overplotting.
+This is easy to cope with, since the output of the `plot_dist_to_reference` function
+returns a `ggplot` object,
+```{R}
+o + facet_wrap(~run) + geom_hline(yintercept=0, linetype='dotted')
+```
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/dist2meds3_2.jpg "Distances to Median Retention Times")
+
+
 ### Command line usage:
 * Find out where your package was installed with `find.package('LFQBench2')` in your R console
 * add it to your PATH variable (this might work on Windows too, but it will be much more complicated).
