@@ -9,6 +9,9 @@
 #' @param spline.df Degrees of freedom for the spline extrapolating the rolling medians and rolling MADs.
 #' @param grid.points.cnt Number of points in the grid extrapolating the rolling medians and rolling MADS.
 #' @return A data.table with denoised and smoothed estimates of distances to the median reference run.
+#' @import data.table
+#' @importFrom stats runmed smooth.spline
+#' @importFrom matrixStats rowMedians
 #' @export
 get_smoothed_data = function(x, runs, ids,
                              min_observed_cnt = 2,
@@ -16,6 +19,10 @@ get_smoothed_data = function(x, runs, ids,
                              mad_cnt = 2,
                              spline.df = 30,
                              grid.points.cnt = 100){
+  # setting local vars to None to avoid Notes popping up in CRAN.
+  run_cnt=rt=id=run=med=roll_med_rt=rt_ref_d=roll_mad_rt=mid=NULL
+  # It only makes the love-hate relationship with R more interesting.
+
   D = data.table(rt=x, run=runs, id=ids)
   D = D[, run_cnt:=length(rt), by=id][run_cnt>=min_observed_cnt]
   D = unique( D, by=c('id','run') )
@@ -63,9 +70,14 @@ get_smoothed_data = function(x, runs, ids,
 #'
 #' @param S A data.table (or data.frame) with columns 'run', 'x' (the reference), and 'mid'. Additionally, can contain columns 'top' and 'bot' for ribbons. As produced by the 'get_smoothed_data' function.
 #' @return A ggplot object.
+#' @importFrom ggplot2 ggplot aes geom_line theme_classic xlab ylab geom_ribbon
 #' @export
 plot_dist_to_reference = function(S)
 {
+  # setting local vars to None to avoid Notes popping up in CRAN.
+  x=run=bot=top=mid=NULL
+  # It only makes the love-hate relationship with R more interesting.
+
   o = ggplot(S, aes(x=x, group=run))
   if("top" %in% colnames(S) & "bot" %in% colnames(S)) o = o + geom_ribbon(aes(ymin=bot, ymax=top), alpha=.2)
   o = o +

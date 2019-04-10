@@ -1,5 +1,6 @@
 library(data.table)
 library(ggplot2)
+library(LFQBench2)
 
 # path = path.expand('~/Projects/LFQBench2/data/peptides.csv')
 path = path.expand('~/Projects/retentiontimealignment/Data/annotated_data.csv')
@@ -15,5 +16,6 @@ plot_dist_to_reference(S)
 
 Z <- S
 Z[, `:=`(top=NULL, bot=NULL)]
-plot_dist_to_reference(Z)
+p = plot_dist_to_reference(Z)
+p + geom_hline(yintercept=0, linetype='dashed')
 

@@ -5,7 +5,7 @@
 \title{Read an ISOQuant csv peptide report.}
 \usage{
 read_isoquant_peptide_report(path, long_df = FALSE,
-  intensity_pattern = "intensity in", ...)
+  intensity_pattern = "intensity in")
 }
 \arguments{
 \item{path}{Path to the report.}

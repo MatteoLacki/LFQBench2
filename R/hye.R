@@ -12,9 +12,9 @@ hye_plots = function(path,
                      add_trend=FALSE)
 {
   peps = peptide_quantification_report(path, "intensity in ")
-  peps = peps %>%
-    mutate(organism = factor(str_split_fixed(peps$entry, "_", 2)[,2]),
-           condition = str_replace(condition, condition_replacement,"")) %>%
+  peps = mutate(peps,
+                organism = factor(str_split_fixed(peps$entry, "_", 2)[,2]),
+                condition = str_replace(condition, condition_replacement,"")) %>%
     separate(condition, c("sample", "run"), sep=' ', remove = F) %>%
     mutate(run = as.integer(run))
   stopifnot(all(organisms$name %in% levels(peps$organism)))
@@ -33,8 +33,7 @@ hye_plots = function(path,
     rename(organism=name)
 
   density2d =
-    HYE %>%
-    ggplot(aes(x=A, y=A/B, color=organism)) +
+    ggplot(HYE, aes(x=A, y=A/B, color=organism)) +
     geom_hline(data = real_ratios, aes(yintercept=ratios)) +
     geom_density_2d(size=1, alpha=.8, n=100, contour=T) +
     scale_x_continuous(trans = 'log10') +

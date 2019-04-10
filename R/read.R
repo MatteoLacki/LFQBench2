@@ -4,10 +4,15 @@
 #' @param long_df Should the output be in the long format? [default = FALSE]
 #' @param intensity_pattern A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']
 #' @param sheet Which excell sheet should be imported [default="TOP3 quantification"]
+#' @param ... Other parameters that are meaningless.
 #' @return Wide or long data.table
+#' @importFrom data.table as.data.table melt
+#' @importFrom readxl read_excel
 #' @export
-read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]", sheet="TOP3 quantification", ...)
-{
+read_isoquant_protein_report = function(path,
+                                        long_df=FALSE,
+                                        intensity_pattern="[A|B][:space:][:digit:]",
+                                        sheet="TOP3 quantification"){
   o = as.data.table(read_excel(path, sheet=sheet, skip=1))
   o[o == ""] = NA
   o[, path:=path][, grep("AVERAGE", colnames(o)):=NULL] # add path, remove AVEAGEs
@@ -26,9 +31,11 @@ read_isoquant_protein_report = function(path, long_df=FALSE, intensity_pattern="
 #' @param long_df Should the output be in the long format? [default = FALSE]
 #' @param intensity_pattern A pattern that will select columns with intensities [default = "intensity in"]
 #' @return Wide or long data.table
+#' @import data.table
 #' @export
-read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern = "intensity in", ...)
-{
+read_isoquant_peptide_report = function(path,
+                                        long_df = FALSE,
+                                        intensity_pattern = "intensity in"){
   o = fread(path)
   o[o == ""] = NA
   o$path = path
@@ -47,9 +54,12 @@ read_isoquant_peptide_report = function(path, long_df = FALSE, intensity_pattern
 #' @param long_df Should the output be in the long format? [default = FALSE]
 #' @param intensity_pattern A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']
 #' @return Wide or long data.table
+#' @importFrom data.table fread melt
+#' @importFrom stringr str_which
 #' @export
-read_isoquant_simple_protein_report = function(path, long_df=FALSE, intensity_pattern="[A|B][:space:][:digit:]", ...)
-{
+read_isoquant_simple_protein_report = function(path,
+                                               long_df=FALSE,
+                                               intensity_pattern="[A|B][:space:][:digit:]"){
   o = fread(path)
   o[o == ""] = NA
   o$path = path
