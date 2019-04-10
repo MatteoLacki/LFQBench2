@@ -10,7 +10,7 @@
 #' @param grid.points.cnt Number of points in the grid extrapolating the rolling medians and rolling MADS.
 #' @return A data.table with denoised and smoothed estimates of distances to the median reference run.
 #' @import data.table
-#' @importFrom stats runmed smooth.spline
+#' @importFrom stats runmed smooth.spline predict
 #' @importFrom matrixStats rowMedians
 #' @export
 get_smoothed_data = function(x, runs, ids,

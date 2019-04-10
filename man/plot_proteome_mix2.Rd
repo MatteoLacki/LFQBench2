@@ -4,7 +4,7 @@
 \alias{plot_proteome_mix2}
 \title{Plot proteome data.}
 \usage{
-plot_proteome_mix2(species, A, B, organisms, bins = 300, ...)
+plot_proteome_mix2(species, A, B, organisms, bins = 300)
 }
 \arguments{
 \item{species}{Tags identifying the species a protein/peptides comes from.}
@@ -14,6 +14,8 @@ plot_proteome_mix2(species, A, B, organisms, bins = 300, ...)
 \item{B}{The intensities gathered with preteomes in ratios B.}
 
 \item{organisms}{A data.frame containing names of species and the ratios with which these are mixed by the experimentalist.}
+
+\item{bins}{The number of bins used for hexagonal binning in 'geom_hex'.}
 }
 \value{
 List of three different ggplots.
