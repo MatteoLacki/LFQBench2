@@ -5,10 +5,15 @@ library(LFQBench2)
 # path = path.expand('~/Projects/LFQBench2/data/peptides.csv')
 path = path.expand('~/Projects/retentiontimealignment/Data/annotated_data.csv')
 D = fread(path)
-
 ids = D$id
 runs = D$run
 rt = D$rt
+
+D = fread(path)
+ids = D$id
+runs = D$run
+rt = D$rt
+
 
 S = get_smoothed_data(rt, runs, ids)
 S[,run:=ordered(run)]

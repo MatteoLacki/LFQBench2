@@ -1,59 +1,89 @@
-#' Plot relative ratios of the mixed proteomes.
+
+#' Prepare peptide data for the intensity comparison plots.
 #'
-#' @param path Path to the human-yeast-ecoli report.
-#' @param organisms A data.frame with columns 'name' (of the species), 'A' (relative ratios of proteome in sample A), and 'B' (relative ratios of proteome in sample B).
-#' @param condition_replacement Part of the column name with intensities in the original report, that must be replaced by an empty string.
-#' @param add_trend Add in lines describing the relationship between median intensity and the ratios of median intensities.
-#' @return A list with two ggplot objects.
+#' @param D Peptide report (columns 'modifier', 'sequence', 'entry', 'intensity' required).
+#' @param entry_species_sep What sign separates the protein entries from the species description in the 'entry' column?
+#' @param cond_run_sep What sign separates the condition from the run label in the 'cond' column?
+#' @return Data for proteome intensity plots.
 #' @export
-hye_plots = function(path,
-                     organisms,
-                     condition_replacement="intensity in HYE110_",
-                     add_trend=FALSE)
-{
-  peps = peptide_quantification_report(path, "intensity in ")
-  peps = mutate(peps,
-                organism = factor(str_split_fixed(peps$entry, "_", 2)[,2]),
-                condition = str_replace(condition, condition_replacement,"")) %>%
-    separate(condition, c("sample", "run"), sep=' ', remove = F) %>%
-    mutate(run = as.integer(run))
-  stopifnot(all(organisms$name %in% levels(peps$organism)))
-
-  HYE = peps %>%
-    group_by(sample, organism, entry) %>%
-    summarize(intensity=median(intensity)) %>%
-    ungroup %>%
-    filter(organism %in% organisms$name) %>%
-    spread(sample, intensity) %>%
-    na.omit()
-
-  real_ratios = organisms %>%
-    mutate(ratios = A/B) %>%
-    select(name, ratios) %>%
-    rename(organism=name)
-
-  density2d =
-    ggplot(HYE, aes(x=A, y=A/B, color=organism)) +
-    geom_hline(data = real_ratios, aes(yintercept=ratios)) +
-    geom_density_2d(size=1, alpha=.8, n=100, contour=T) +
-    scale_x_continuous(trans = 'log10') +
-    scale_y_continuous(trans = 'log10') +
-    theme_tufte() +
-    xlab("Intensity A") +
-    ylab("Intensity A / Intensity B") +
-    theme(legend.position="bottom")
-
-  if(add_trend) density2d = density2d + geom_smooth(se = F, linetype='dashed')
-
-  density =
-    HYE %>%
-    ggplot(aes(x = A / B, color=organism, fill=organism)) +
-    geom_density(alpha=.5) +
-    scale_x_continuous(trans = 'log10') +
-    theme_tufte() +
-    xlab("Intensity A / Intensity B") +
-    theme(legend.position="bottom")
-
-  return(list(density=density, density2d=density2d))
+preprocess_peptides_4_intensity_plots = function(D, entry_species_sep = "_", cond_run_sep = " "){
+  D[,id:=ifelse(is.na(modifier), sequence, paste0(sequence, modifier, sep="_"))]
+  D = D[!is.na(entry),.(id, entry, cond, intensity)]
+  D[, c('entry', 'species') := tstrsplit(entry, entry_species_sep)]
+  D[, cond := str_replace(cond, "intensity in HYE110_", "")]
+  D[, c('cond', 'run') := tstrsplit(cond, cond_run_sep) ][, run:=as.integer(run)]
+  D_meds = D[,.(intensity_med=median(intensity), run_cnt=.N), by=.(id, cond, species)]
+  D_meds = dcast(D_meds, id + species ~ cond, value.var = 'intensity_med')
+  D_meds_good = D_meds[complete.cases(D_meds)]
+  D_meds_good
 }
 
+
+preprocess_proteins_4_intensity_plots = function(D,
+                                        entry_species_sep = "_",
+                                        cond_run_sep = " "){
+  D = D[!is.na(entry),.(entry, cond, intensity)][!str_detect(entry, "_CONTA")]
+  D[, c('entry', 'species') := tstrsplit(entry, entry_species_sep)]
+  D[, c('cond', 'run') := tstrsplit(cond, cond_run_sep) ][, run:=as.integer(run)]
+  D_meds = D[,.(intensity_med=median(intensity), run_cnt=.N), by=.(entry, cond, species)]
+  D_meds = dcast(D_meds, entry + species ~ cond, value.var = 'intensity_med')
+  D_meds_good = D_meds[complete.cases(D_meds)]
+  colnames(D_meds_good)[1] = 'id'
+  D_meds_good
+}
+
+
+#' Plot proteome data.
+#'
+#' @param species Tags identifying the species a protein/peptides comes from.
+#' @param A The intensities gathered with preteomes in ratios A.
+#' @param B The intensities gathered with preteomes in ratios B.
+#' @param organisms A data.frame containing names of species and the ratios with which these are mixed by the experimentalist.
+#' @return List of three different ggplots.
+#' @export
+plot_proteome_mix2 = function(species, A, B, organisms,
+                              bins=300, ...){
+  D = data.frame(species=species, A=A, B=B)
+  D = D[species %in% organisms$species,]
+  organisms$ratio = with(organisms, B/A)
+  o = list()
+  max_A = max(D$A)
+  base = ggplot(D, aes(x=A, y=B/A))
+  o$scatterplot = base +
+    geom_point(aes(color=species), size=1) +
+    geom_hline(data=organisms, aes(yintercept=ratio), size=1) +
+    geom_label(data=organisms, aes(x=max_A, y=ratio, label=species)) +
+    scale_x_log10(labels=comma) +
+    scale_y_log10(labels=comma, breaks=organisms$ratio) +
+    theme_classic() +
+    theme(legend.position = "bottom")
+  o$hex_dens2d = base +
+    geom_hex(bins=bins) +
+    scale_x_log10(labels=scales::comma) +
+    scale_y_log10(labels=scales::comma, breaks=organisms$ratio) +
+    geom_hline(data=organisms, aes(yintercept=ratio), size=2, color='red') +
+    geom_label(data=organisms, aes(x=max_A, y=ratio, label=species)) +
+    theme_classic() +
+    theme(legend.position = "bottom")
+  o$dens2d = base +
+    geom_density_2d(aes(color=species), contour=T) +
+    scale_x_log10(labels=scales::comma) +
+    scale_y_log10(labels=scales::comma, breaks=organisms$ratio) +
+    geom_hline(data=organisms, aes(yintercept=ratio), size=1) +
+    geom_label(data=organisms, aes(x=max_A, y=ratio, label=species)) +
+    theme_classic() +
+    theme(legend.position = "bottom")
+  return(o)
+}
+
+
+#' Plot proteome data.
+#'
+#' @param X Data.frame/table with columns 'species', 'A', 'B' (and potentially others).
+#' @param ... Other parameters to plot_proteome_mix2 (like bins) that don't appear in X already.
+#' @return List of three different ggplots.
+#' @export
+plot_proteome_mix = function(X, ...){
+  X = unlist(list(as.list(X), list(...)), F)
+  do.call(plot_proteome_mix2, X)
+}
