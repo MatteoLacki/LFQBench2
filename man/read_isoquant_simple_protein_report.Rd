@@ -5,7 +5,7 @@
 \title{Read a simple protein ISOQuant report.}
 \usage{
 read_isoquant_simple_protein_report(path, long_df = FALSE,
-  intensity_pattern = "[A|B][:space:][:digit:]", ...)
+  intensity_pattern = "[A|B][:space:][:digit:]")
 }
 \arguments{
 \item{path}{Path to the report.}

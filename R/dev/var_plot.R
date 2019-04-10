@@ -16,7 +16,8 @@ o = plot_dist_to_reference(S)
 
 Z <- S
 Z[, `:=`(top=NULL, bot=NULL)]
-plot_dist_to_reference(Z)
+p = plot_dist_to_reference(Z)
+p + geom_hline(yintercept=0, linetype='dashed')
 
 o = ggplot(S, aes(x=x, group=run))
 if("top" %in% colnames(S) & "bot" %in% colnames(S)){
