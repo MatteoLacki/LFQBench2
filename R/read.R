@@ -2,26 +2,37 @@
 #'
 #' @param path Path to the protein report.
 #' @param long_df Should the output be in the long format? [default = FALSE]
-#' @param intensity_pattern A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']
+#' @param I_col_pattern A pattern selecting columns with intensities [default = '[A|B][:space:][:digit:]']
+#' @param I_col_pattern_group_names Names of the groups defined in the intensity pattern.
 #' @param sheet Which excell sheet should be imported [default="TOP3 quantification"]
-#' @param ... Other parameters that are meaningless.
 #' @return Wide or long data.table
 #' @importFrom data.table as.data.table melt
 #' @importFrom readxl read_excel
+#' @importFrom stringr str_match str_which
 #' @export
 read_isoquant_protein_report = function(path,
                                         long_df=FALSE,
-                                        intensity_pattern="[A|B][:space:][:digit:]",
+                                        I_col_pattern="[A|B][:space:][:digit:]",
+                                        I_col_pattern_group_names=NA,
                                         sheet="TOP3 quantification"){
   o = as.data.table(read_excel(path, sheet=sheet, skip=1))
   o[o == ""] = NA
   o[, path:=path][, grep("AVERAGE", colnames(o)):=NULL] # add path, remove AVEAGEs
+  I_cols = as.data.table(str_match(colnames(o), I_col_pattern))
+  if(any(is.na(I_col_pattern_group_names))){
+    # there were no group names, os some where NA
+    I_col_pattern_group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
+  }
+  colnames(I_cols) = c('I_col_name', I_col_pattern_group_names)
+  idx_intensity = str_which(colnames(o), I_col_pattern)
+  I_cols = I_cols[idx_intensity,]
   if(long_df) o = melt(o,
-                       measure.vars=str_which(colnames(o), intensity_pattern),
+                       measure.vars=idx_intensity,
                        na.rm=T,
                        variable.factor=F,
-                       variable.name="cond",
-                       value.name="intensity")
+                       variable.name='I_col_name',
+                       value.name="intensity")[I_cols,
+                                               on='I_col_name']
   return(o)
 }
 
