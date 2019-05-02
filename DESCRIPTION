@@ -11,7 +11,7 @@ Description: This package aims at assuring comparability between
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: R(>= 3.4.0)
+Depends: R(>= 3.3.0)
 Imports:
    data.table,
    matrixStats,
