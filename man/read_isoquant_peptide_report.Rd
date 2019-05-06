@@ -8,6 +8,8 @@ read_isoquant_peptide_report(path, ...)
 }
 \arguments{
 \item{path}{Path to the report.}
+
+\item{...}{Optional parameters for the wide2long function.}
 }
 \value{
 Wide or long data.table

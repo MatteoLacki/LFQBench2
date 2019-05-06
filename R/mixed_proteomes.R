@@ -1,4 +1,3 @@
-
 #' Prepare peptide data for the intensity comparison plots.
 #'
 #' @param D Peptide report (columns 'modifier', 'sequence', 'entry', 'intensity' required).

@@ -15,7 +15,10 @@ read_isoquant_protein_report = function(path,
   o[o == ""] = NA
   o[, grep("AVERAGE", colnames(o)):=NULL] # remove AVERAGEs
   if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(...)
+    o = wide2long(o, ...)
+    class(o) = append(class(o), "long_protein_report")
+  } else {
+    class(o) = append(class(o), "wide_protein_report")
   }
   return(o)
 }
@@ -24,6 +27,7 @@ read_isoquant_protein_report = function(path,
 #' Read an ISOQuant csv peptide report.
 #'
 #' @param path Path to the report.
+#' @param ... Optional parameters for the wide2long function.
 #' @return Wide or long data.table
 #' @importFrom data.table fread
 #' @export
@@ -31,10 +35,14 @@ read_isoquant_peptide_report = function(path, ...){
   o = fread(path)
   o[o == ""] = NA
   if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(...)
+    o = wide2long(o, ...)
+    class(o) = append(class(o), "long_peptide_report")
+  } else {
+    class(o) = append(class(o), "wide_peptide_report")
   }
   return(o)
 }
+
 
 #' Read a simple protein ISOQuant report.
 #'
@@ -48,7 +56,10 @@ read_isoquant_simple_protein_report = function(path, ...){
   o = fread(path)
   o[o == ""] = NA
   if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(...)
+    o = wide2long(o, ...)
+    class(o) = append(class(o), "long_protein_report")
+  } else {
+    class(o) = append(class(o), "wide_protein_report")
   }
   return(o)
 }

@@ -1,3 +1,4 @@
+library(LFQBench2)
 library(data.table)
 library(matrixStats)
 library(stringr)
@@ -24,10 +25,17 @@ SD = LFQBench2::get_smoothed_data(INPUT$rt, INPUT$run, INPUT$id)
 
 path = '~/Projects/LFQBench2/tests/data/ISOQuant_pep_2016-010_HYE110_UDMSE_peptide_quantification_report.csv'
 path = path.expand(path)
-entry_specie_sep = "_"
-cond_run_sep = " "
 
-D = LFQBench2::read_isoquant_peptide_report(path, T, "intensity in")
+D = read_isoquant_peptide_report(path)
+class(D)
+D = read_isoquant_peptide_report(path, I_col_pattern="intensity in HYE110_(.) (.)",
+                                 I_col_pattern_group_names=c("cond", "tech_repl"))
+
+class(D)
+
+
+class(bubba) <- append(class(bubba),"Flamboyancy")
+
 
 preprocess_4_intensity_plots = function(D,
                                         entry_specie_sep = "_",

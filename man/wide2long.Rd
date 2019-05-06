@@ -22,8 +22,7 @@ Data in long format has one intensity per row and more than one row corresponds 
 The long format is convenient for merging multiple reports and for plotting with ggplot2.
 }
 \examples{
-# Columns 'intensity A 1', 'intensity A 2', 'intensity B 1', and 'intensity A 2'.
-# wide2long(report, 'intensity (.) (.)', c('tech_repl', 'bio_repl'))
-# Columns 'I111', 'I112','I121', 'I122', 'I311', 'I312', 'I321'
-# wide2long(report, 'I(.)(.)(.)')
+data(simple_protein_report)
+# Columns 'A 1', 'A 2', 'A 3'. 'A 4', 'B 1', 'B 2', 'B 3', 'B 4'.
+# wide2long(simple_protein_report, '(.) (.)', c('condition', 'technical_replicate'))
 }

@@ -53,20 +53,16 @@ head(W)
 Therefore, by setting `I_col_pattern` you can easily detect columns reporting intensities and organize them into groups based on the column string using groups (to understand this concept, check out the cheetsheet for the `stringr` package).
 
 
-I_col_pattern = "a pattern distinguishing columns with intensities from other columns, and that can group the intensities"),
-
-
-
-Check out `?read_isoquant`, `?read_isoquant_protein_report`, `?read_isoquant_peptide_report`, `?read_isoquant_simple_protein_report` for more help in R console.
-
-
 ### Comparing intensities of protein mixtures
 
-With our package, you can produce plots like this ![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye_2.jpg "Comparing Human-Yeast-Ecoli Proteomes")
-with as little as this code:
+With our package you can generate plots that show departures of the observed 
+ratios of proteins/peptide intensities from the injected amounts.
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye_2.jpg "Comparing Human-Yeast-Ecoli Proteomes")
+This can be achieved with:
 ```{R}
 library(LFQBench2)
-D = read_isoquant(report='protein', path='path_to_your_ISOQuant_protein_report', long_df=TRUE)
+path = 'path_to_your_ISOQuant_protein_report'
+D = read_isoquant_protein_report(path)
 D_meds = preprocess_proteins_4_intensity_plots(D)
 o = plot_proteome_mix(E_meds_good, organisms, bins=100)
 W = plot_grid(plotlist=o, nrow=1, align='h', axis='l')
