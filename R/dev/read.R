@@ -1,3 +1,4 @@
+library(readxl)
 library(data.table)
 library(matrixStats)
 library(stringr)
@@ -5,37 +6,32 @@ library(stringr)
 path = '~/Projects/lab_analysis/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx'
 # path = '~/Projects/lab_analysis/data/2018-072 Kuner_user designed 20190131-154908_quantification_report_eval_ML.xlsx'
 long_df=T
-intensity_pattern = 'Kuner '
+I_col_pattern = 'Kuner '
 sheet="TOP3 quantification"
-intensity_pattern = "2018-072-0(.) Kuner (.)"
-group_names = c('tech_rep', 'biol_rep')
-group_names = NA
-
+I_col_pattern = "2018-072-0(.) Kuner (.)"
+I_col_pattern_group_names = c('tech_rep', 'biol_rep')
+I_col_pattern_group_names = NA
 
 o = as.data.table(read_excel(path, sheet=sheet, skip=1))
 o[o == ""] = NA
-o[, path:=path][, grep("AVERAGE", colnames(o)):=NULL] # add path, remove AVEAGEs
-
-I_cols = as.data.table(str_match(colnames(o), intensity_pattern))
-if(any(is.na(group_names))){
-  # there were no group names, os some where NA
-  group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
-}
-colnames(I_cols) = c('I_col_name', group_names)
-idx_intensity = str_which(colnames(o), intensity_pattern)
-I_cols = I_cols[idx_intensity,]
-
-if(long_df) o = melt(o,
-                     measure.vars=idx_intensity,
-                     na.rm=T,
-                     variable.factor=F,
-                     variable.name='I_col_name',
-                     value.name="intensity")[I_cols,
-                                             on='I_col_name']
-
-
-
-#
+o[, path:=path][, grep("AVERAGE",colnames(o)):=NULL] # add path, remove AVEAGEs
+if(long_df){
+  I_cols = as.data.table(str_match(colnames(o), I_col_pattern))
+  if(any(is.na(I_col_pattern_group_names))){
+    # there were no group names, os some where NA
+    I_col_pattern_group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
+  }
+  colnames(I_cols) = c('I_col_name', I_col_pattern_group_names)
+  idx_intensity = str_which(colnames(o), I_col_pattern)
+  I_cols = I_cols[idx_intensity,]
+  o = melt(o,
+           measure.vars=idx_intensity,
+           na.rm=T,
+           variable.factor=F,
+           variable.name='I_col_name',
+           value.name="intensity")[I_cols,
+                                   on='I_col_name']
+}#
 # ## Peptides
 # # path = '~/Projects/LFQBench2/data/peptides.csv'
 # path = '~/Projects/LFQBench2/data/simple_proteins.csv'
