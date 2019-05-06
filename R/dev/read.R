@@ -4,6 +4,8 @@ library(matrixStats)
 library(stringr)
 
 path = '~/Projects/lab_analysis/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx'
+
+
 # path = '~/Projects/lab_analysis/data/2018-072 Kuner_user designed 20190131-154908_quantification_report_eval_ML.xlsx'
 long_df=T
 I_col_pattern = 'Kuner '

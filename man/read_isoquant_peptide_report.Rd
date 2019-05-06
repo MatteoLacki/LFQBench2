@@ -4,15 +4,10 @@
 \alias{read_isoquant_peptide_report}
 \title{Read an ISOQuant csv peptide report.}
 \usage{
-read_isoquant_peptide_report(path, long_df = FALSE,
-  intensity_pattern = "intensity in")
+read_isoquant_peptide_report(path, ...)
 }
 \arguments{
 \item{path}{Path to the report.}
-
-\item{long_df}{Should the output be in the long format? [default = FALSE]}
-
-\item{intensity_pattern}{A pattern that will select columns with intensities [default = "intensity in"]}
 }
 \value{
 Wide or long data.table

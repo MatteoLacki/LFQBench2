@@ -1,4 +1,5 @@
-# Welcome to LFQBench2: an R package that can be used to compare protein/peptide quantification results
+# Welcome to LFQBench2
+## an R package used to compare protein/peptide quantification results
 
 ### Installation
 Install `devtools` with
@@ -10,18 +11,51 @@ and then, install our software directly from github:
 devtools::install_github("MatteoLacki/LFQBench2")
 ```
 
-### Reading the reports
-The package can be used in R scripts to open reports of the ISOquant package (all three types: protein, peptides, and simple_proteins):
+### Reading reports
+#### IsoQuant 
+The package can be used in R scripts to open reports of the ISOquant package.
+The user can choose among functions such as 
+* `read_isoquant_protein_report`,
+* `read_isoquant_peptide_report`, 
+* and `read_isoquant_simple_protein_report`.
 
+To read in a full protein report, use
 ```{r}
 library(LFQBench2)
 
 # Read in isoquant report in the long-format
-DL = read_isoquant(
-	report = 'protein',
-	path = "/Users/great_user/his_wonderful_data/super_ISOQuant_protein_report.xlsx",
-    col_pattern = "some_text_that_only_appears_in_columns_with_intensities")
+DL = read_isoquant_protein_report(path = "path/to/report.xlsx"),
 ```
+As outcome, you get a `data.table` in the wide format, which roughly corresponds 
+to the original format of the report.
+
+In the wide format, every row corresponds to exactly one protein and several columns contains informations on the measured intensities found in different runs submitted to IsoQuant (for it is a match-between-runs algorithm after all).
+This is easy to visualize in Excel, but not so comfy, if you want to combine several projects or plot the outcomes with  `ggplot2`.
+
+To cast the function between wide and long formats, use `wide2long` function.
+To check, how it works, consider
+```{R}
+data(simple_protein_report)
+colnames(simple_protein_report)
+# c('A 1', 'A 2', 'A 3'. 'A 4', 'B 1', 'B 2', 'B 3', 'B 4')
+W = wide2long(simple_protein_report,
+  I_col_pattern = '(.) (.)',
+  I_col_pattern_group_names = c('condition', 'technical_replicate'))
+head(W)
+#          entry I_col_name intensity condion technical_replicate
+# 1: 1433B_HUMAN        A 1     54698       A                   1
+# 2: 1433E_HUMAN        A 1    111761       A                   1
+# 3: 1433F_HUMAN        A 1      6721       A                   1
+# 4: 1433G_HUMAN        A 1     38671       A                   1
+# 5: 1433S_HUMAN        A 1     10788       A                   1
+# 6: 1433T_HUMAN        A 1     34178       A                   1
+```
+Therefore, by setting `I_col_pattern` you can easily detect columns reporting intensities and organize them into groups based on the column string using groups (to understand this concept, check out the cheetsheet for the `stringr` package).
+
+
+I_col_pattern = "a pattern distinguishing columns with intensities from other columns, and that can group the intensities"),
+
+
 
 Check out `?read_isoquant`, `?read_isoquant_protein_report`, `?read_isoquant_peptide_report`, `?read_isoquant_simple_protein_report` for more help in R console.
 

@@ -4,20 +4,14 @@
 \alias{read_isoquant_protein_report}
 \title{Read an ISOQuant protein report.}
 \usage{
-read_isoquant_protein_report(path, long_df = FALSE,
-  I_col_pattern = "[A|B][:space:][:digit:]",
-  I_col_pattern_group_names = NA, sheet = "TOP3 quantification")
+read_isoquant_protein_report(path, sheet = "TOP3 quantification", ...)
 }
 \arguments{
 \item{path}{Path to the protein report.}
 
-\item{long_df}{Should the output be in the long format? [default = FALSE]}
-
-\item{I_col_pattern}{A pattern selecting columns with intensities [default = '[A|B][:space:][:digit:]']}
-
-\item{I_col_pattern_group_names}{Names of the groups defined in the intensity pattern.}
-
 \item{sheet}{Which excell sheet should be imported [default="TOP3 quantification"]}
+
+\item{...}{Optional parameters for the wide2long function.}
 }
 \value{
 Wide or long data.table

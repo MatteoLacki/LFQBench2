@@ -4,15 +4,12 @@
 \alias{read_isoquant_simple_protein_report}
 \title{Read a simple protein ISOQuant report.}
 \usage{
-read_isoquant_simple_protein_report(path, long_df = FALSE,
-  intensity_pattern = "[A|B][:space:][:digit:]")
+read_isoquant_simple_protein_report(path, ...)
 }
 \arguments{
 \item{path}{Path to the report.}
 
-\item{long_df}{Should the output be in the long format? [default = FALSE]}
-
-\item{intensity_pattern}{A pattern that will select columns with intensities [default = '[A|B][:space:][:digit:]']}
+\item{...}{Optional parameters for the wide2long function.}
 }
 \value{
 Wide or long data.table
