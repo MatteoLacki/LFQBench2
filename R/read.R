@@ -1,4 +1,4 @@
-#' Read an ISOQuant protein report.
+' Read an ISOQuant protein report.
 #'
 #' @param path Path to the protein report.
 #' @param sheet Which excell sheet should be imported [default="TOP3 quantification"]
@@ -14,12 +14,9 @@ read_isoquant_protein_report = function(path,
   o = as.data.table(read_excel(path, sheet=sheet, skip=1))
   o[o == ""] = NA
   o[, grep("AVERAGE", colnames(o)):=NULL] # remove AVERAGEs
-  if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(o, ...)
-    class(o) = append(class(o), "long_protein_report")
-  } else {
-    class(o) = append(class(o), "wide_protein_report")
-  }
+  attr(o, 'orientation') = 'wide'
+  class(o) = append(class(o), "protein")
+  if(length(list(...))>0) o = wide2long(o, ...)
   return(o)
 }
 
@@ -34,12 +31,9 @@ read_isoquant_protein_report = function(path,
 read_isoquant_peptide_report = function(path, ...){
   o = fread(path)
   o[o == ""] = NA
-  if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(o, ...)
-    class(o) = append(class(o), "long_peptide_report")
-  } else {
-    class(o) = append(class(o), "wide_peptide_report")
-  }
+  attr(o, 'orientation') = 'wide'
+  class(o) = append(class(o), "peptide")
+  if(length(list(...))>0) o = wide2long(o, ...)
   return(o)
 }
 
@@ -55,11 +49,8 @@ read_isoquant_peptide_report = function(path, ...){
 read_isoquant_simple_protein_report = function(path, ...){
   o = fread(path)
   o[o == ""] = NA
-  if(length(list(...))>0){# some arguments were passed for wide2long
-    o = wide2long(o, ...)
-    class(o) = append(class(o), "long_protein_report")
-  } else {
-    class(o) = append(class(o), "wide_protein_report")
-  }
+  attr(o, 'orientation') = 'wide'
+  class(o) = append(class(o), "protein")
+  if(length(list(...))>0) o = wide2long(o, ...)
   return(o)
 }

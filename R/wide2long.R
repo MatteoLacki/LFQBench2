@@ -18,19 +18,23 @@
 wide2long = function(wide_report,
                      I_col_pattern,
                      I_col_pattern_group_names=NA){
-    I_cols = as.data.table(str_match(colnames(wide_report), I_col_pattern))
-    if(any(is.na(I_col_pattern_group_names))){
-      # there were no group names, os some where NA
-      I_col_pattern_group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
-    }
-    colnames(I_cols) = c('I_col_name', I_col_pattern_group_names)
-    idx_intensity = str_which(colnames(wide_report), I_col_pattern)
-    I_cols = I_cols[idx_intensity,]
-    long_report = melt(wide_report,
-                       measure.vars=idx_intensity,
-                       na.rm=T,
-                       variable.factor=F,
-                       variable.name='I_col_name',
-                       value.name="intensity")[I_cols, on='I_col_name']
+  I_cols = as.data.table(str_match(colnames(wide_report), I_col_pattern))
+  if(any(is.na(I_col_pattern_group_names))){
+    # there were no group names, os some where NA
+    I_col_pattern_group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
+  }
+  colnames(I_cols) = c('I_col_name', I_col_pattern_group_names)
+
+  idx_intensity = str_which(colnames(wide_report), I_col_pattern)
+  I_cols = I_cols[idx_intensity,]
+  long_report = melt(wide_report,
+                     measure.vars=idx_intensity,
+                     na.rm=T,
+                     variable.factor=F,
+                     variable.name='I_col_name',
+                     value.name="intensity")[I_cols, on='I_col_name']
+  attr(long_report, 'groups') = I_col_pattern_group_names
+  attr(long_report, 'orientation') = 'long'
+  class(long_report) = class(wide_report)
   return(long_report)
 }

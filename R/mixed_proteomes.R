@@ -8,16 +8,19 @@
 #' @importFrom stringr str_replace
 #' @importFrom stats median
 #' @export
-preprocess_peptides_4_intensity_plots = function(D, entry_species_sep = "_", cond_run_sep = " "){
-  # setting local vars to None to avoid Notes popping up in CRAN.
-  id=modifier=entry=cond=intensity=run=species=NULL
-  # It only makes the love-hate relationship with R more interesting.
-
-  D[,id:=ifelse(is.na(modifier), sequence, paste0(sequence, modifier, sep="_"))]
+preprocess_peptides_4_intensity_plots = function(D,
+                                                 entry_species_sep = "_",
+                                                 cond_run_sep = " ")
+{
+  D$id = ifelse(is.na(D$modifier), D$sequence, paste0(D$sequence, D$modifier, sep="_"))
   D = D[!is.na(entry),.(id, entry, cond, intensity)]
-  D[, c('entry', 'species') := tstrsplit(entry, entry_species_sep)]
-  D[, cond := str_replace(cond, "intensity in HYE110_", "")]
-  D[, c('cond', 'run') := tstrsplit(cond, cond_run_sep) ][, run:=as.integer(run)]
+  entry_species = str_split_fixed(D$entry, entry_species_sep, 2)
+  D$entry = entry_species[,1]
+  D$species = entry_species[,2]
+  D$cond = str_replace(D$cond, "intensity in HYE110_", "")
+  cond_run = str_split_fixed(D$cond, cond_run_sep, 2)
+  D$cond = cond_run[,1]
+  D$run = as.integer(cond_run[,2])
   D_meds = D[,.(intensity_med=median(intensity), run_cnt=.N), by=.(id, cond, species)]
   D_meds = dcast(D_meds, id + species ~ cond, value.var = 'intensity_med')
   D_meds_good = D_meds[complete.cases(D_meds)]
@@ -62,7 +65,7 @@ preprocess_proteins_4_intensity_plots = function(D,
 #' @return List of three different ggplots.
 #' @importFrom ggplot2 ggplot geom_point geom_hline geom_label scale_x_log10 scale_y_log10 theme_classic theme geom_hex geom_density_2d
 #' @export
-plot_proteome_mix2 = function(species, A, B, organisms, bins=300){
+plot_proteome_mix2 = function(species, A, B, organisms, bins=100){
   # setting local vars to None to avoid Notes popping up in CRAN.
   ratio=comma=NULL
   # It only makes the love-hate relationship with R more interesting.
@@ -81,14 +84,12 @@ plot_proteome_mix2 = function(species, A, B, organisms, bins=300){
     scale_y_log10(labels=comma, breaks=organisms$ratio) +
     theme_classic() +
     theme(legend.position = "bottom")
-  o$hex_dens2d = base +
-    geom_hex(bins=bins) +
+  o$hex = base +
+    geom_hex(aes(fill=species, alpha=..count..), bins=bins) +
     scale_x_log10(labels=scales::comma) +
     scale_y_log10(labels=scales::comma, breaks=organisms$ratio) +
-    geom_hline(data=organisms, aes(yintercept=ratio), size=2, color='red') +
-    geom_label(data=organisms, aes(x=max_A, y=ratio, label=species)) +
-    theme_classic() +
-    theme(legend.position = "bottom")
+    geom_hline(data=organisms, aes(yintercept=ratio, color=name), size=1) +
+    theme_classic()
   o$dens2d = base +
     geom_density_2d(aes(color=species), contour=T) +
     scale_x_log10(labels=scales::comma) +

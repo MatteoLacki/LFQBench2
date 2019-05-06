@@ -62,9 +62,11 @@ This can be achieved with:
 ```{R}
 library(LFQBench2)
 path = 'path_to_your_ISOQuant_protein_report'
-D = read_isoquant_protein_report(path)
+D = read_isoquant_protein_report(path,
+  I_col_pattern="the pattern",
+  I_col_pattern_group_names=c('the','names','of','the','groups'))
 D_meds = preprocess_proteins_4_intensity_plots(D)
-o = plot_proteome_mix(E_meds_good, organisms, bins=100)
+o = plot_proteome_mix(D_meds, organisms, bins=100)
 W = plot_grid(plotlist=o, nrow=1, align='h', axis='l')
 ```
 (install cowplot for the extra `plot_grid` function, though).
