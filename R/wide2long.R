@@ -1,3 +1,17 @@
+#' Parse the pattern.
+#'
+#' @export
+parse_pattern = function(s){
+  names = str_extract_all(s, "\\([^\\)]*\\)")[[1]]
+  if(length(names) == 0) stop(paste0("Your 'PPPATTERN' has no groups [i.e. (.), or (name)]: '", s,"'"))
+  names = str_extract(names, "\\(\\:[^:]+:")
+  names = str_sub(names, 3L, -2L)# no brackets
+  names[is.na(names)] = paste("group", 1:sum(is.na(names)), sep='_')
+  s_out = str_replace_all(s, "\\(\\:[^:]+:", "(")
+  return(list(pattern=s_out, names=names))
+}
+
+
 #' Reshape a wide report into a long format.
 #'
 #' Data in wide format has one peptide/protein per row, and multple columns with intensities.
@@ -5,35 +19,30 @@
 #' The long format is convenient for merging multiple reports and for plotting with ggplot2.
 #'
 #' @param wide_report A report in a wide format.
-#' @param I_col_pattern A pattern selecting columns with intensities; consult the `stringr` package.
-#' @param I_col_pattern_group_names Names of the groups defined in the intensity pattern. If left NA, group names will be automatically generated.
+#' @param I_col_pattern A pattern selecting columns with intensities; consult the `stringr` package. Additionally, you can specify the group name by including it between the colons.
 #' @return A report in a long format.
 #' @importFrom data.table as.data.table melt
 #' @importFrom stringr str_match str_which
 #' @examples
 #' data(simple_protein_report)
 #' # Columns 'A 1', 'A 2', 'A 3'. 'A 4', 'B 1', 'B 2', 'B 3', 'B 4'.
-#' # wide2long(simple_protein_report, '(.) (.)', c('condition', 'technical_replicate'))
+#' # wide2long(simple_protein_report, '(:condition:.) (:technical_replicate:.)')
 #' @export
-wide2long = function(wide_report,
-                     I_col_pattern,
-                     I_col_pattern_group_names=NA){
-  I_cols = as.data.table(str_match(colnames(wide_report), I_col_pattern))
-  if(any(is.na(I_col_pattern_group_names))){
-    # there were no group names, os some where NA
-    I_col_pattern_group_names = paste("group", 1:(ncol(I_cols)-1), sep='_')
-  }
-  colnames(I_cols) = c('I_col_name', I_col_pattern_group_names)
-
-  idx_intensity = str_which(colnames(wide_report), I_col_pattern)
-  I_cols = I_cols[idx_intensity,]
+wide2long = function(wide_report, I_col_pattern){
+  p_pat = parse_pattern(I_col_pattern)
+  I_cols = str_match_all(colnames(wide_report), p_pat$pattern)
+  where_pattern = sapply(I_cols, length) > 0
+  idx_intensity = colnames(wide_report)[where_pattern]
+  if(!any(where_pattern)) stop("Pattern not found among column names.")
+  I_cols = rbindlist(lapply(I_cols[where_pattern], as.data.frame))
+  colnames(I_cols) = c("I_col_name", p_pat$names)
   long_report = melt(wide_report,
                      measure.vars=idx_intensity,
                      na.rm=T,
                      variable.factor=F,
                      variable.name='I_col_name',
                      value.name="intensity")[I_cols, on='I_col_name']
-  attr(long_report, 'groups') = I_col_pattern_group_names
+  attr(long_report, 'groups') = p_pat$names
   attr(long_report, 'orientation') = 'long'
   class(long_report) = class(wide_report)
   return(long_report)

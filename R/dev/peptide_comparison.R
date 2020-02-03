@@ -69,6 +69,5 @@ ggsave("/home/matteo/Projects/LFQBench2/tests/plots/no_trend_lines.png",
 ggsave("/home/matteo/Projects/LFQBench2/tests/plots/with_trend_lines.png",
        width = 12, height=20, units='cm')
 
-
 ggsave("/home/matteo/Projects/LFQBench2/tests/plots/density.png",
        width = 12, height=12, units='cm')
