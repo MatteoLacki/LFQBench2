@@ -28,7 +28,7 @@ path = path.expand(path)
 D = read_isoquant_peptide_report(path,
                                  I_col_pattern="intensity in HYE110_(.) (.)",
                                  I_col_pattern_group_names=c("cond", "tech_repl"))
-
+W
 D_meds = preprocess_peptides_4_intensity_plots(D)
 
 # preprocess_4_intensity_plots = function(D) UseMethod("preprocess_4_intensity_plots", D)
