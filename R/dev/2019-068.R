@@ -37,6 +37,10 @@ data4intensityPlots = function(D,
 }
 
 
-
+sampleComposition = data.frame(
+  species = c("HUMAN","YEAST", "ECOLI"),
+  A       = c(  135,     03,      12  ),
+  B       = c(  135,     09,      06  )
+)
 
 preprocess_peptides_4_intensity_plots(P)
