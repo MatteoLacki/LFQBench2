@@ -4,8 +4,16 @@
 \alias{get_smoothed_data}
 \title{Get smoothed distances to reference and estimates of standard deviation.}
 \usage{
-get_smoothed_data(x, runs, ids, min_observed_cnt = 2, window_size = 11,
-  mad_cnt = 2, spline.df = 30, grid.points.cnt = 100)
+get_smoothed_data(
+  x,
+  runs,
+  ids,
+  min_observed_cnt = 2,
+  window_size = 11,
+  mad_cnt = 2,
+  spline.df = 30,
+  grid.points.cnt = 100
+)
 }
 \arguments{
 \item{x}{Array of values to smooth.}

@@ -1,21 +1,33 @@
 library(LFQBench2)
+library(stringr)
+library(data.table)
 
 dp = "~/Projects/LFQBench2/data/2019-068/long_runs/2019-068_PYE_1_3_IMS_user designed 20200131-171545_"
 peptide_rep = paste0(dp, "peptide_quantification_report.csv")
 protein_rep = paste0(dp, "quantification_report.xlsx")
 
-P = read_isoquant_peptide_report(peptide_rep,
-  I_col_pattern="intensity in 2019-068-03 SYE (:condition:.) 1:3 (:tech_repl:.)")
+P = read_report(peptide_rep,
+                I_col_pattern="intensity in 2019-068-03 SYE (:condition:.) 1:3 (:tech_repl:.)")
+R = read_report(protein_rep,
+                I_col_pattern="2019-068-03 SYE (:condition:.) 1:3 (:tech_repl:.)")
 
-R = read_isoquant_protein_report(protein_rep,
-  I_col_pattern="(:year:....)-(:sample:...)-(:no:..) SYE (:condition:.) 1:3 (:tech_repl:.)")
-
-R = read_isoquant_protein_report(protein_rep,
-                                 I_col_pattern="2019-(:UTE:...)-.* SYE (:condition:.) 1:3 (:replicate:.)")
-
-
-read_isoquant_protein_report(protein_rep)
 D = R
+species_col = 'accession'
+sampleComposition = data.frame(
+  species = c("HUMAN","YEAS8", "ECOLI"),
+  A       = c(  135,     03,      12  ),
+  B       = c(  135,     09,      06  )
+)
+
+if( "origin" %in% colnames(D) ) stop('Rename column "origin", as we use it!')
+species = unlist(D[, species_col, with=FALSE])
+D$origin = str_match(species, ".*_(.*)")[,2]
+species_present = unique(origin)
+if(!all(sampleComposition$species %in% species_present)) stop('Species not found among the peptides: ')
+
+
+table(origin)
+
 
 data4intensityPlots = function(D,
                                entry_species_sep = "_",
@@ -36,11 +48,5 @@ data4intensityPlots = function(D,
   D_meds_good
 }
 
-
-sampleComposition = data.frame(
-  species = c("HUMAN","YEAST", "ECOLI"),
-  A       = c(  135,     03,      12  ),
-  B       = c(  135,     09,      06  )
-)
 
 preprocess_peptides_4_intensity_plots(P)
