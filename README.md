@@ -12,67 +12,62 @@ devtools::install_github("MatteoLacki/LFQBench2")
 ```
 
 ### Reading reports
-#### IsoQuant 
-The package can be used in R scripts to open reports of the ISOquant package.
-The user can choose among functions such as 
-* `read_isoquant_protein_report`,
-* `read_isoquant_peptide_report`, 
-* and `read_isoquant_simple_protein_report`.
-
-To read in a full protein report, use
-```{r}
-library(LFQBench2)
-
-# Read in isoquant report in the long-format
-DL = read_isoquant_protein_report(path = "path/to/report.xlsx"),
-```
-As outcome, you get a `data.table` in the wide format, which roughly corresponds 
-to the original format of the report.
-
-In the wide format, every row corresponds to exactly one protein and several columns contains informations on the measured intensities found in different runs submitted to IsoQuant (for it is a match-between-runs algorithm after all).
-This is easy to visualize in Excel, but not so comfy, if you want to combine several projects or plot the outcomes with  `ggplot2`.
-
-To cast the function between wide and long formats, use `wide2long` function.
-To check, how it works, consider
-```{R}
-data(simple_protein_report)
-colnames(simple_protein_report)
-# c('A 1', 'A 2', 'A 3'. 'A 4', 'B 1', 'B 2', 'B 3', 'B 4')
-W = wide2long(simple_protein_report,
-  I_col_pattern = '(.) (.)',
-  I_col_pattern_group_names = c('condition', 'technical_replicate'))
-head(W)
-#          entry I_col_name intensity condion technical_replicate
-# 1: 1433B_HUMAN        A 1     54698       A                   1
-# 2: 1433E_HUMAN        A 1    111761       A                   1
-# 3: 1433F_HUMAN        A 1      6721       A                   1
-# 4: 1433G_HUMAN        A 1     38671       A                   1
-# 5: 1433S_HUMAN        A 1     10788       A                   1
-# 6: 1433T_HUMAN        A 1     34178       A                   1
-```
-Therefore, by setting `I_col_pattern` you can easily detect columns reporting intensities and organize them into groups based on the column string using groups (to understand this concept, check out the cheetsheet for the `stringr` package).
-
-
-### Comparing intensities of protein mixtures
-
-With our package you can generate plots that show departures of the observed 
-ratios of proteins/peptide intensities from the injected amounts.
-![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye_2.jpg "Comparing Human-Yeast-Ecoli Proteomes")
-This can be achieved with:
+The package can be used to open excel and csv reports with quantification results.
+To open a data in wide format, where intensities are reported in columns, use `read_wide_report`.
+For example, in case of IsoQuant reports, simply write:
 ```{R}
 library(LFQBench2)
-path = 'path_to_your_ISOQuant_protein_report'
-D = read_isoquant_protein_report(path,
-  I_col_pattern="the pattern",
-  I_col_pattern_group_names=c('the','names','of','the','groups'))
-D_meds = preprocess_proteins_4_intensity_plots(D)
-o = plot_proteome_mix(D_meds, organisms, bins=100)
-W = plot_grid(plotlist=o, nrow=1, align='h', axis='l')
+
+R = read_wide_report(path_to_report, skip=1, sheet="TOP3 quantification")
 ```
-(install cowplot for the extra `plot_grid` function, though).
-To get the first plot only, interpret additionally
+Function 'read_wide_report' uses readxl::read_excel or data.table::fread underneath, and additional arguments to these function can be added directly to function call.
+
+To extract intensity and design from the resulting `data.table` use `get_intensities`.
 ```{R}
-o$scatterplot
+library(LFQBench2)
+
+I = get_intensities(R, I_col_pattern=".* SYE (:condition:.) 1:3 (:tech_repl:.)")
+```
+Underneath, we use `stringr` regular expressions, so the pattern can be pretty general and should differentiate the intensity columns from other columns.
+Note, that we have modified these expressions to include group names.
+Thus, `:condition:` in `(:condition:.)` will result in an additional column with the name `condition` in the output of `get_intensities` function.
+You can give arbitrary names to groups and have as many groups you like.
+However, naming one group as `condition` is necessary for the calculations of intensity ratios.
+
+Now, we will need to know, which proteomes/peptidomes are there at which spiked in ratios:
+```{R}
+sampleComposition = data.frame(
+  species = c("HUMAN","YEAS8", "ECOLI"),
+  A       = c(  135,     03,      12  ),
+  B       = c(  135,     09,      06  )
+)
+```
+
+Then, it's all quite easy: we can then calculate median levels of intensities per protein/peptide with:
+```{R}
+MI = get_ratios_of_medians(I$I, I$design, species, sampleComposition)
+```
+and plot the outcomes with
+```{R}
+plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
+plots$main
+```
+
+![](https://github.com/MatteoLacki/LFQBench2/blob/master/picts/hye.png "Comparing Human-Yeast-Ecoli Proteomes")
+Alltogether, the code was as short as
+```{R}
+sampleComposition = data.frame(
+  species = c("HUMAN","YEAS8", "ECOLI"),
+  A       = c(  135,     03,      12  ),
+  B       = c(  135,     09,      06  )
+)
+R = read_wide_report(path_to_report, skip=1, sheet="TOP3 quantification")
+I = get_intensities(R, I_col_pattern=".* SYE (:condition:.) 1:3 (:tech_repl:.)")
+species = get_species(species_col=R[['accession']],
+                      species_pattern=".*_(.*)")
+MI = get_ratios_of_medians(I$I, I$design, species, sampleComposition)
+plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
+plots$main
 ```
 
 ### Plotting distances to median retention time

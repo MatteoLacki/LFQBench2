@@ -112,3 +112,44 @@ plot_proteome_mix = function(X, ...){
   X = unlist(list(as.list(X), list(...)), F)
   do.call(plot_proteome_mix2, X)
 }
+
+#' Get species tags from a species column.
+#'
+#' @param I data.table with intensities in wide format.
+#' @param design experimental design for columns in I.
+#' @param sampleComposition composition of spiked in samples
+#' @return list with the main plot, scatterplot, and boxplots.
+#' @importFrom ggplot2 ggplot geom_hline geom_point geom_boxplot scale_x_log10 scale_y_log10 theme_minimal xlab ylab theme element_blank
+#' @importFrom cowplot align_plots plot_grid
+#' @export
+plot_ratios = function(clean_meds, sampleComposition){
+  conditions = colnames(clean_meds)[1:2]
+  # scatterplot log(intensity in condition 1) ~ log(ratio of intensities)
+  p = ggplot() +
+    geom_hline(data=sampleComposition, aes(yintercept=ratios, color=species)) +
+    # geom_hex(data=clean_meds, aes(x=get(conditions[1]), y=I_ratio, fill=species), alpha=.3, bins=100) +
+    geom_point(data=clean_meds, aes(x=get(conditions[1]), y=I_ratio, color=species),
+               alpha=.7, size=1) +
+    scale_x_log10() +
+    scale_y_log10() +
+    theme_minimal() +
+    xlab(paste0("log(", conditions[1],")")) +
+    ylab("log(Intensity Ratio)") +
+    theme(legend.position='left')
+
+  # boxplots log(ratio of intensities)
+  b = ggplot() +
+    geom_hline(data=sampleComposition, aes(yintercept=ratios, color=species)) +
+    geom_boxplot(data=clean_meds, aes(x=species, y=I_ratio, fill=species), alpha=.5) +
+    scale_y_log10(position = "right") +
+    theme_minimal() +
+    ylab("log(Intensity Ratio)") +
+    theme(legend.position='none',
+          axis.text.x=element_blank(),
+          axis.title.x=element_blank(),
+          axis.ticks.x=element_blank())
+  pb = align_plots(p, b, align = 'h', axis = 'r')
+  names(pb) = c('scatterplot', 'boxplot')
+  final_plot = plot_grid(pb$scatterplot, pb$boxplot, rel_widths = c(4,1))
+  return(list(main=final_plot, scatterplot=p, boxplot=b))
+}

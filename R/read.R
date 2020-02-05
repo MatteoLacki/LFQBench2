@@ -56,24 +56,23 @@ read_isoquant_simple_protein_report = function(path, ...){
 }
 
 
-#' Read a file with intensities (peptide/protein/whatever).
+#' Read a file with intensities (peptide/protein/whatever) in columns (wide format).
 #'
-#' Optionally, collect the intensity columns into one column (long format).
+#' All empty cells are replaced with NAs.
+#' Optionally, columns entirely filled with NAs are droped.
 #'
 #' @param path Path to the report.
-#' @param ... Optional parameters for the wide2long function.
-#' @return Wide or long data.table
+#' @param drop_na_columns
+#' @param ... Optional parameters for either data.table::fread or readxl::read_excel
+#' @return Wide data.table.
 #' @importFrom data.table fread
 #' @importFrom readxl read_excel
 #' @export
-read_report = function(path,
-                       I_col_pattern="",
-                       sheet="TOP3 quantification",
-                       drop_na_columns=T){
+read_wide_report = function(path, drop_na_columns=T, ...){
   if(tools::file_ext(path) == 'csv'){
-    o = fread(path)
+    o = fread(path, ...)
   } else {
-    o = read_excel(path, sheet=sheet, skip=1)
+    o = read_excel(path, ...)
   }
   o = as.data.table(o)
   o[o == ""] = NA
@@ -83,6 +82,5 @@ read_report = function(path,
     cols_to_elim = colnames(cols_to_elim)[cols_to_elim]
     if(length(cols_to_elim) > 0) o[,(cols_to_elim):=NULL]
   }
-  if(I_col_pattern != '') return(wide2long(o, I_col_pattern))
-  else return(o)
+  return(o)
 }
