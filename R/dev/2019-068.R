@@ -35,4 +35,13 @@ MI = get_ratios_of_medians(I$I, I$design, species, sampleComposition)
 plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
 plots$main
 
-# I_col_pattern=
+# R = read_wide_report(protein_rep, skip=1, sheet="TOP3 quantification")
+# I = get_intensities(R, I_col_pattern="(:year:....)-(:experiment_no:...)-(:something:..) SYE (:condition:.) 1:3 (:technical_replicate:.)")
+# LI = data.table::melt(I$I, variable.name='I_col_name')
+# merge(LI, I$design, by='I_col_name')
+get_metrics = function(){
+  #
+  # implement
+}
+
+
