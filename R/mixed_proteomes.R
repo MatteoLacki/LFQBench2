@@ -133,8 +133,8 @@ plot_ratios = function(clean_meds, sampleComposition){
     scale_x_log10() +
     scale_y_log10() +
     theme_minimal() +
-    xlab(paste0("log(", conditions[1],")")) +
-    ylab("log(Intensity Ratio)") +
+    xlab(paste("Intensity of", conditions[1])) +
+    ylab("Intensity Ratio") +
     theme(legend.position='left')
 
   # boxplots log(ratio of intensities)

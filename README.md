@@ -34,6 +34,53 @@ Thus, `:condition:` in `(:condition:.)` will result in an additional column with
 You can give arbitrary names to groups and have as many groups you like.
 However, naming one group as `condition` is necessary for the calculations of intensity ratios.
 
+The outcome of `get_intensities` will might like that then:
+```{R}
+$I
+     2019-068-03 SYE A 1:3 1 2019-068-03 SYE A 1:3 2 2019-068-03 SYE A 1:3 3 2019-068-06 SYE B 1:3 1 2019-068-06 SYE B 1:3 2 2019-068-06 SYE B 1:3 3
+  1:             1047382.333             1064490.000             1128334.000             1105886.667             1093933.333             1084953.333
+  2:              639159.667              671481.000              678078.667              668860.667              690640.667              671030.333
+  3:             1679442.333             1762389.333             1737078.333             1881198.000             1851061.667             1898205.667
+  4:              681142.333              679438.000              679724.000              677334.333              693968.333              666099.667
+  5:               56764.333               52828.000               65068.333              126121.667              127239.000              136701.667
+ ---                                                                                                                                                
+278:                4702.500                5311.000                4066.500               13863.000               13288.000               13402.500
+279:                4690.000                4768.000                4229.000                5138.000                5296.000                4388.000
+280:                3960.000                4219.667                4002.333                2111.500                2258.500                1892.333
+281:                4740.333                4664.667                5411.333                2692.667                2631.667                2757.500
+282:               60659.500               61878.500               63753.000               67623.500               68640.500               56331.500
+
+$design
+                I_col_name condition tech_repl
+1: 2019-068-03 SYE A 1:3 1         A         1
+2: 2019-068-03 SYE A 1:3 2         A         2
+3: 2019-068-03 SYE A 1:3 3         A         3
+4: 2019-068-06 SYE B 1:3 1         B         1
+5: 2019-068-06 SYE B 1:3 2         B         2
+6: 2019-068-06 SYE B 1:3 3         B         3
+```
+It is easy to add the design information to the intensities (if you want that):
+```{R}
+library(data.table)
+LI = melt(I$I, variable.name='I_col_name')
+merge(LI, I$design, by='I_col_name')
+
+> merge(LI, I$design, by='I_col_name')
+                   I_col_name       value condition tech_repl
+   1: 2019-068-03 SYE A 1:3 1 1047382.333         A         1
+   2: 2019-068-03 SYE A 1:3 1  639159.667         A         1
+   3: 2019-068-03 SYE A 1:3 1 1679442.333         A         1
+   4: 2019-068-03 SYE A 1:3 1  681142.333         A         1
+   5: 2019-068-03 SYE A 1:3 1   56764.333         A         1
+  ---                                                        
+1688: 2019-068-06 SYE B 1:3 3   13402.500         B         3
+1689: 2019-068-06 SYE B 1:3 3    4388.000         B         3
+1690: 2019-068-06 SYE B 1:3 3    1892.333         B         3
+1691: 2019-068-06 SYE B 1:3 3    2757.500         B         3
+1692: 2019-068-06 SYE B 1:3 3   56331.500         B         3
+```
+This can be used in other projects, where you might want to study intensities as depending upon the groups defined by the design of your experiment.
+
 Now, we will need to know, which proteomes/peptidomes are there at which spiked in ratios:
 ```{R}
 sampleComposition = data.frame(
