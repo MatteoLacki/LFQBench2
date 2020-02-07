@@ -2,10 +2,21 @@
 % Please edit documentation in R/wide2long.R
 \name{parse_pattern}
 \alias{parse_pattern}
-\title{Parse the pattern.}
+\title{Parse column pattern.}
 \usage{
 parse_pattern(s)
 }
+\arguments{
+\item{s}{Teh pattern to match}
+}
+\value{
+a list with the pattern without group names, and the found names.
+}
 \description{
-Parse the pattern.
+The parser uses a slighttly modified version of 'stringr' library.
+The modification lets you name the groups.
+A group is a regular expression in brackets, like '(...)'.
+You can name the group by supplying it between two columns, for instance
+(:condition:...) will match a group of 3 symbols (the three dots), and call
+that group 'condition'.
 }

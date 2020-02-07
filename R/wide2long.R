@@ -1,9 +1,19 @@
-#' Parse the pattern.
+#' Parse column pattern.
 #'
+#' The parser uses a slighttly modified version of 'stringr' library.
+#' The modification lets you name the groups.
+#' A group is a regular expression in brackets, like '(...)'.
+#' You can name the group by supplying it between two columns, for instance
+#' (:condition:...) will match a group of 3 symbols (the three dots), and call
+#' that group 'condition'.
+#'
+#' @param s Teh pattern to match
+#' @return a list with the pattern without group names, and the found names.
+#' @importFrom stringr str_extract_all str_extract str_sub str_replace_all
 #' @export
 parse_pattern = function(s){
   names = str_extract_all(s, "\\([^\\)]*\\)")[[1]]
-  if(length(names) == 0) stop(paste0("Your 'PPPATTERN' has no groups [i.e. (.), or (name)]: '", s,"'"))
+  if(length(names) == 0) stop(paste0("Your 'PPPATTERN' has no groups [i.e. (.), or (:name:)]: '", s,"'"))
   names = str_extract(names, "\\(\\:[^:]+:")
   names = str_sub(names, 3L, -2L)# no brackets
   names[is.na(names)] = paste("group", 1:sum(is.na(names)), sep='_')

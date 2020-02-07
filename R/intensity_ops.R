@@ -4,7 +4,7 @@
 #' @param I_col_pattern Pattern to match intensity columns.
 #' @return list with intensities and description of the experimental design
 #' @importFrom data.table as.data.table rbindlist
-#' @importFrom stringr str_match str_match_all
+#' @importFrom stringr str_match_all
 #' @export
 get_intensities = function(D, I_col_pattern){
   D = as.data.table(D)
