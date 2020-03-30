@@ -1,3 +1,16 @@
+#' Read ISOQuant ini configuration.
+#'
+#' Read a separate .ini file containing ISOQuant configuration.
+#'
+#' @param path Path to the config file (output of ISOQuant config exporter).
+#' @return data.table with config pairs: parameter-value
+#' @importFrom data.table fread
+#' @export
+read_isoquant_config_from_ini = function(path){
+  conf = fread(path, sep='=', skip=1L, col.names=c('parameter','value'))
+  return(conf)
+}
+
 #' Open ISOQuant config.
 #'
 #' Open ISOQuant config from an excel protein quantification report.

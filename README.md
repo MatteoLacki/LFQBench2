@@ -117,6 +117,21 @@ plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
 plots$main
 ```
 
+# Reading multiple reports
+
+You can open multiple ISOQuant reports, stored each as a string in a vector.
+For instance, suppose you have all your protein quantification files in a folder called "greatResults".
+All files are excel files, with extension '.xlsx'.
+To find them all, you can use the in-build R Sys.glob function, add names to the outcome, and open the files.
+
+```{R}
+reports_paths = Sys.glob('path/to/you/greatResults/*.xlsx') # * is a wildcard for any string
+names(reports_paths) = your_short_names_for_files
+mega_report = read_isoquant_protein_reports(reports_paths, "pattern_used_to_distinguish_intensity_columns")
+```
+Then, `mega_report` will be a concatenation of long-format protein reports.
+For this to work, you must supply the pattern that can be used to uniquely identify all the intensity columns, as described in `?read_isoquant_protein_report`.
+
 ### Reading config files
 It is now possible to read in configuration sets from the ISOQuant output.
 This should be done to assure that you have been using the same parameters across different projects.
