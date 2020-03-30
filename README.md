@@ -146,7 +146,7 @@ library(LFQBench2)
 # files were used across your ISOQuant analysis, or to pinpoint the differences.
 
 reports_paths = Sys.glob("data/kuner_2018_072/data/obelix/output/*.xlsx") # here any character vector will do
-names(reports_paths) = str_match(reports_paths, ".* Kuner (.*) Obelix_user")[,2]
+names(reports_paths) = c('your','short','names','for','files')
 configs = read_isoquant_configs(reports_paths)
 config_diff = diff_isoquant_configs(configs)
 # if configs are the same, an empty data.table (data.frame) is returned.
