@@ -117,6 +117,30 @@ plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
 plots$main
 ```
 
+### Reading config files
+It is now possible to read in configuration sets from the ISOQuant output.
+This should be done to assure that you have been using the same parameters across different projects.
+More generally, this allows for the monitoring of changes between the different files.
+Here be examples:
+
+```{R}
+library(stringr)
+library(LFQBench2)
+
+# This script illustrates how to assure oneself that the same configuration
+# files were used across your ISOQuant analysis, or to pinpoint the differences.
+
+reports_paths = Sys.glob("data/kuner_2018_072/data/obelix/output/*.xlsx") # here any character vector will do
+names(reports_paths) = str_match(reports_paths, ".* Kuner (.*) Obelix_user")[,2]
+configs = lread(reports_paths, read_isoquant_config_from_report)
+config_diff = diff_isoquant_configs(configs)
+# if configs are the same, an empty data.table (data.frame) is returned.
+```
+
+Note that the comparison of configurations is done pairwise, for each pair of configurations.
+Also, note that the opening and comparison of configuration files is separated, so that you
+can always peep into the configs quickly.
+
 ### Plotting distances to median retention time
 
 With our package, you can also check the quality of your chromatography system by comparing multiple technical repetitions of the experiment over time (i.e. different *runs*).
