@@ -6,6 +6,9 @@
 \usage{
 read_isoquant_config_from_report(path)
 }
+\arguments{
+\item{path}{Read configuration from report.}
+}
 \value{
 data.table
 }

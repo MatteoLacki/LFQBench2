@@ -62,7 +62,7 @@ read_isoquant_simple_protein_report = function(path, ...){
 #' Optionally, columns entirely filled with NAs are droped.
 #'
 #' @param path Path to the report.
-#' @param drop_na_columns
+#' @param drop_na_columns Drop empty columns.
 #' @param ... Optional parameters for either data.table::fread or readxl::read_excel
 #' @return Wide data.table.
 #' @importFrom data.table fread

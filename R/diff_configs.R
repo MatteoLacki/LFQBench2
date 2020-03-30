@@ -2,7 +2,7 @@
 #'
 #' Open ISOQuant config from an excel protein quantification report.
 #'
-#' @param path
+#' @param path Read configuration from report.
 #' @return data.table
 #' @importFrom data.table as.data.table
 #' @importFrom readxl read_excel
@@ -12,9 +12,6 @@ read_isoquant_config_from_report = function(path){
     conf = as.data.table(conf[2:nrow(conf), 3:ncol(conf)])
     return(conf)
 }
-
-#TODO: add read_isoquant_config_from_ini and read_isoquant_config. 
-
 
 #' Show differences between config files in ISOQuant protein quantification reports.
 #' 
@@ -34,4 +31,22 @@ diff_isoquant_configs = function(configs){
   if (nrow(res) == 0) print('Configs are the same.')
   return(res)
 }
+
+#' Read ISOQuant configuration.
+#' 
+#' Read in the parameters of a project.
+#' 
+#' @param path Path to the config file (output of ISOQuant config exporter) or a protein quantification report.
+#' @param Additional parameters to the specific reader.
+#' @return data.table with config pairs: parameter-value
+#' @importFrom data.table fread
+#' @export 
+read_isoquant_config = function(path, ...)
+  switch(
+    tools::file_ext(path),
+    'ini' = read_isoquant_config_from_ini,
+    'xlsx' = read_isoquant_config_from_report,
+    stop('File type with his extension not handled.')
+  )(path)
+
 

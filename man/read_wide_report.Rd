@@ -9,6 +9,8 @@ read_wide_report(path, drop_na_columns = T, ...)
 \arguments{
 \item{path}{Path to the report.}
 
+\item{drop_na_columns}{Drop empty columns.}
+
 \item{...}{Optional parameters for either data.table::fread or readxl::read_excel}
 }
 \value{

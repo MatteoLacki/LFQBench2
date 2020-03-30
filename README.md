@@ -135,6 +135,8 @@ names(reports_paths) = str_match(reports_paths, ".* Kuner (.*) Obelix_user")[,2]
 configs = lread(reports_paths, read_isoquant_config_from_report)
 config_diff = diff_isoquant_configs(configs)
 # if configs are the same, an empty data.table (data.frame) is returned.
+# if there are differences, best to view them with the appropriated viewer:
+View(config_diff)
 ```
 
 Note that the comparison of configurations is done pairwise, for each pair of configurations.
