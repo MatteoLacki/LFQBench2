@@ -117,7 +117,7 @@ plots = plot_ratios(MI$I_cleanMeds, MI$sampleComposition)
 plots$main
 ```
 
-# Reading multiple reports
+#### Reading multiple reports
 
 You can open multiple ISOQuant reports, stored each as a string in a vector.
 For instance, suppose you have all your protein quantification files in a folder called "greatResults".
@@ -147,7 +147,7 @@ library(LFQBench2)
 
 reports_paths = Sys.glob("data/kuner_2018_072/data/obelix/output/*.xlsx") # here any character vector will do
 names(reports_paths) = str_match(reports_paths, ".* Kuner (.*) Obelix_user")[,2]
-configs = lread(reports_paths, read_isoquant_config_from_report)
+configs = read_isoquant_configs(reports_paths)
 config_diff = diff_isoquant_configs(configs)
 # if configs are the same, an empty data.table (data.frame) is returned.
 # if there are differences, best to view them with the appropriated viewer:
@@ -157,6 +157,15 @@ View(config_diff)
 Note that the comparison of configurations is done pairwise, for each pair of configurations.
 Also, note that the opening and comparison of configuration files is separated, so that you
 can always peep into the configs quickly.
+
+Finally, if you supply only one value to the above function, it will return one `data.table` instead of a list of `data.table`s.
+
+```{R}
+library(LFQBench2)
+
+config = read_isoquant_configs(a_simple_path_to_either_config_ini_or_protein_report)
+View(config)
+```
 
 ### Plotting distances to median retention time
 

@@ -1,46 +1,14 @@
 library(LFQBench2)
 library(data.table)
 
-
 path = "~/Projects/LFQBench2/data/20200206_isoquant.ini"
 
+read_isoquant_configs("~/Projects/LFQBenchData/data/20200206_isoquant.ini")
+read_isoquant_configs("~/Projects/lab_analysis/kuner/kuner_2018_072/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx")
 
-#' Read ISOQuant ini configuration.
-#'
-#' Read a separate .ini file containing ISOQuant configuration.
-#'
-#' @param path Path to the config file (output of ISOQuant config exporter).
-#' @return data.table with config pairs: parameter-value
-#' @importFrom data.table fread
-#' @export
-read_isoquant_config_from_ini = function(path){
-  conf = fread(path, sep='=', skip=1L, col.names=c('parameter','value'))
-  return(conf)
-}
+paths = c(A="~/Projects/LFQBenchData/data/20200206_isoquant.ini",
+          B='~/Projects/lab_analysis/kuner/kuner_2018_072/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx')
 
-#' Read ISOQuant configuration.
-#' 
-#' Read in the parameters of a project.
-#' 
-#' @param path Path to the config file (output of ISOQuant config exporter) or a protein quantification report.
-#' @return data.table with config pairs: parameter-value
-#' @importFrom data.table fread
-#' @export 
-read_isoquant_config = function(path, ...)
-  switch(
-    tools::file_ext(path),
-    'ini' = read_isoquant_config_from_ini,
-    'xlsx' = read_isoquant_config_from_report,
-    stop('File type with his extension not handled.')
-  )(path)
+read_isoquant_configs(paths)
+View(diff_isoquant_configs(read_isoquant_configs(paths)))
 
-read_isoquant_config("~/Projects/LFQBench2/data/20200206_isoquant.ini")
-read_isoquant_config("~/Projects/lab_analysis/kuner/kuner_2018_072/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx")
-
-
-A = read_isoquant_config_from_ini("~/Projects/LFQBench2/data/20200206_isoquant.ini")
-B = read_isoquant_config_from_report('~/Projects/lab_analysis/kuner/kuner_2018_072/data/obelix/output/2018-072 Kuner Cerebbellum Obelix_user designed 20190206-142325_quantification_report.xlsx')
-
-View(diff_isoquant_configs(list(a=A, b=B)))
-
-View(A)

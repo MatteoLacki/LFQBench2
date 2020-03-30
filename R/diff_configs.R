@@ -5,7 +5,6 @@
 #' @param path Path to the config file (output of ISOQuant config exporter).
 #' @return data.table with config pairs: parameter-value
 #' @importFrom data.table fread
-#' @export
 read_isoquant_config_from_ini = function(path){
   conf = fread(path, sep='=', skip=1L, col.names=c('parameter','value'))
   return(conf)
@@ -19,7 +18,6 @@ read_isoquant_config_from_ini = function(path){
 #' @return data.table
 #' @importFrom data.table as.data.table
 #' @importFrom readxl read_excel
-#' @export
 read_isoquant_config_from_report = function(path){
     conf = read_excel(path, sheet='config')
     conf = as.data.table(conf[2:nrow(conf), 3:ncol(conf)])
@@ -53,7 +51,6 @@ diff_isoquant_configs = function(configs){
 #' @param Additional parameters to the specific reader.
 #' @return data.table with config pairs: parameter-value
 #' @importFrom data.table fread
-#' @export 
 read_isoquant_config = function(path, ...)
   switch(
     tools::file_ext(path),
@@ -62,4 +59,15 @@ read_isoquant_config = function(path, ...)
     stop('File type with his extension not handled.')
   )(path)
 
+Listolize = function(foo, ...) function(x) if(length(x)==1) foo(x) else lapply(x,foo,...)
 
+#' Read ISOQuant configurations.
+#' 
+#' Read in the parameters from either ini files or protein quantification reports.
+#' 
+#' @param paths Paths to the config file (output of ISOQuant config exporter) or a protein quantification report. If one path is submitted, the output will be a single data.table instead of a list of data.tables.
+#' @param Additional parameters to the specific reader.
+#' @return list of data.tables or a single data.table with config pairs: parameter-value
+#' @importFrom data.table fread
+#' @export
+read_isoquant_configs = Listolize(read_isoquant_config)
