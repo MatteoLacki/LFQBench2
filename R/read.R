@@ -1,4 +1,4 @@
-' Read an ISOQuant protein report.
+#' Read an ISOQuant protein report.
 #'
 #' @param path Path to the protein report.
 #' @param sheet Which excell sheet should be imported [default="TOP3 quantification"]
@@ -83,4 +83,19 @@ read_wide_report = function(path, drop_na_columns=T, ...){
     if(length(cols_to_elim) > 0) o[,(cols_to_elim):=NULL]
   }
   return(o)
+}
+
+#' Read a objects from paths to a named list.
+#'
+#' Reads objects from paths and makes a list with opened objects named after the paths.
+#'
+#' @param paths Array of paths.
+#' @param reader Function used to read objects stored under paths.
+#' @param ... Further arguments to the reader.
+#' @return A list of opened objects.
+#' @export
+lread = function(paths, reader, ...){
+  res = lapply(paths, reader, ...)
+  names(res) = paths
+  return(res)
 }

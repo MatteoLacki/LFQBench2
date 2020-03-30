@@ -57,3 +57,21 @@ wide2long = function(wide_report, I_col_pattern){
   class(long_report) = class(wide_report)
   return(long_report)
 }
+
+
+
+#' Read and combine multiple reports.
+#' 
+#' Read in, transform from wide to long format, and bind the results togeter.
+#' Add in the 'file' column to represent the original report.
+#' 
+#' @param report Character vector with paths to the read in.
+#' @param ... Further parameters to read_isoquant_protein_report.
+#' @return A data.table with combined results.
+#' @export
+read_isoquant_protein_reports = function(reports, ...){
+  DL = lread(reports, read_isoquant_protein_report, ...)
+  DL = data.table::rbindlist(DL, idcol='file')
+  colnames(DL) = make.names(colnames(DL)) #TODO: this should be in the bloody read_isoquant_protein_report
+  DL  
+}
